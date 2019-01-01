@@ -307,7 +307,10 @@ let make = (~testProp, _children) => {
         ...state,
         dialogState: {
           ...state.dialogState,
-          links: [{text: "", url: ""}, ...state.dialogState.links],
+          links: [
+            {text: "placeholderText", url: "placeholderUrl"},
+            ...state.dialogState.links,
+          ],
         },
       })
     | RemoveLink(index) =>
@@ -321,26 +324,24 @@ let make = (~testProp, _children) => {
     | ChangeLinkText(index, newText) =>
       ReasonReact.Update({
         ...state,
-        dialogState:
-          {
-            ...state.dialogState,
-            links:
-              state.dialogState.links
-              |> changeAtIndex(index, {text: newText, url: ""}),
-          },
-          /* TODO: Keep old URL */
+        dialogState: {
+          ...state.dialogState,
+          links:
+            state.dialogState.links
+            |> changeAtIndex(index, {text: newText, url: ""}),
+        },
+        /* TODO: Keep old URL */
       })
     | ChangeLinkUrl(index, newUrl) =>
       ReasonReact.Update({
         ...state,
-        dialogState:
-          {
-            ...state.dialogState,
-            links:
-              state.dialogState.links
-              |> changeAtIndex(index, {text: "", url: newUrl}),
-          },
-          /* TODO: Keep old text */
+        dialogState: {
+          ...state.dialogState,
+          links:
+            state.dialogState.links
+            |> changeAtIndex(index, {text: "", url: newUrl}),
+        },
+        /* TODO: Keep old text */
       })
     },
 
@@ -348,6 +349,7 @@ let make = (~testProp, _children) => {
     let numberOfLinksText =
       "Number of links: "
       ++ string_of_int(self.state.dialogState.links |> List.length);
+    let links = self.state.dialogState.links;
     <div>
       <span> {ReasonReact.string(numberOfLinksText)} </span>
       <button onClick={_event => self.send(AddLink)}>
@@ -355,6 +357,16 @@ let make = (~testProp, _children) => {
       </button>
       {self.state.liftLogState.isLoading ?
          ReasonReact.string(testProp) : ReasonReact.null}
+      <div>
+        <ul>
+          {links
+           |> List.map(link =>
+                <li> {ReasonReact.string(link.text ++ ": " ++ link.url)} </li>
+              )
+           |> Array.of_list
+           |> ReasonReact.array}
+        </ul>
+      </div>
     </div>;
   },
 };
