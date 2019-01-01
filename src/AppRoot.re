@@ -58,15 +58,13 @@ type appState = {
 
 /* Action declaration */
 type action =
-  | Click
-  | Toggle
   | EntryAddStart
   | EntryAddSuccess
   | EntryAddError(string)
   | EntryChangeName(string)
   | EntryChangeWeightLifted(string)
   | LogFetchStart
-  | LogFetchSuccess(string) /* LiftLog */
+  | LogFetchSuccess(string) /* TODO: LiftLog */
   | LogFetchError(string)
   | DialogReset
   | DialogOpen
@@ -127,36 +125,23 @@ let make = (~testProp, _children) => {
   /* State transitions */
   reducer: (action, state) =>
     switch (action) {
-    | Click =>
+    | AddLink =>
       ReasonReact.Update({
         ...state,
         dialogState: {
           ...state.dialogState,
-          numberOfSets: state.dialogState.numberOfSets + 1,
-        },
-      })
-    | Toggle =>
-      ReasonReact.Update({
-        ...state,
-        dialogState: {
-          ...state.dialogState,
-          links: [
-            {text: "linkText", url: "http://linkurl.com"},
-            ...state.dialogState.links,
-          ],
+          links: [{text: "", url: ""}, ...state.dialogState.links],
         },
       })
     },
 
   render: self => {
-    let message =
-      "Number of links"
+    let numberOfLinksText =
+      "Number of links: "
       ++ string_of_int(self.state.dialogState.links |> List.length);
     <div>
-      <button onClick={_event => self.send(Click)}>
-        {ReasonReact.string(message)}
-      </button>
-      <button onClick={_event => self.send(Toggle)}>
+      <span> {ReasonReact.string(numberOfLinksText)} </span>
+      <button onClick={_event => self.send(AddLink)}>
         {ReasonReact.string("Add link")}
       </button>
       {self.state.liftLogState.isLoading ?
