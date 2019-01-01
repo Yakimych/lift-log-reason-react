@@ -4,4 +4,4 @@ ReactDOMRe.renderToElementWithId(
 );
 
 ReactDOMRe.renderToElementWithId(<Component2 greeting="Hello!" />, "index2");
-ReactDOMRe.renderToElementWithId(<AppRoot testProp="TestValue2" />, "root");
+ReactDOMRe.renderToElementWithId(<AppRoot testProp="TestValue" />, "root");

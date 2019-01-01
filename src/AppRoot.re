@@ -59,7 +59,30 @@ type appState = {
 /* Action declaration */
 type action =
   | Click
-  | Toggle;
+  | Toggle
+  | EntryAddStart
+  | EntryAddSuccess
+  | EntryAddError(string)
+  | EntryChangeName(string)
+  | EntryChangeWeightLifted(string)
+  | LogFetchStart
+  | LogFetchSuccess(string) /* LiftLog */
+  | LogFetchError(string)
+  | DialogReset
+  | DialogOpen
+  | DialogClose
+  | SetInputMode
+  | SetNumberOfSets(string)
+  | SetNumberOfReps(string)
+  | AddCustomSet
+  | RemoveCustomSet(int)
+  | ChangeCustomSet(int, string)
+  | ShowComment
+  | ChangeComment(string)
+  | AddLink
+  | RemoveLink(int)
+  | ChangeLinkText(int, string)
+  | ChangeLinkUrl(int, string);
 
 /* Component template declaration.
    Needs to be **after** state and action declarations! */
@@ -113,19 +136,28 @@ let make = (~testProp, _children) => {
         },
       })
     | Toggle =>
-      ReasonReact.Update({...state, liftLogState: state.liftLogState})
+      ReasonReact.Update({
+        ...state,
+        dialogState: {
+          ...state.dialogState,
+          links: [
+            {text: "linkText", url: "http://linkurl.com"},
+            ...state.dialogState.links,
+          ],
+        },
+      })
     },
 
   render: self => {
     let message =
-      "Number of log entries"
-      ++ string_of_int(self.state.liftLogState.logEntries |> List.length);
+      "Number of links"
+      ++ string_of_int(self.state.dialogState.links |> List.length);
     <div>
       <button onClick={_event => self.send(Click)}>
         {ReasonReact.string(message)}
       </button>
       <button onClick={_event => self.send(Toggle)}>
-        {ReasonReact.string("Toggle test")}
+        {ReasonReact.string("Add link")}
       </button>
       {self.state.liftLogState.isLoading ?
          ReasonReact.string(testProp) : ReasonReact.null}
