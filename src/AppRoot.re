@@ -1,7 +1,7 @@
 /* State declaration */
 type set = {
   reps: int,
-  rpe: float,
+  rpe: option(float),
 };
 
 type liftLogEntry = {
@@ -58,9 +58,10 @@ type appState = {
 
 /* Action declaration */
 type action =
-  | EntryAddStart
-  | EntryAddSuccess
-  | EntryAddError(string)
+  /* | EntryAddStart
+     | EntryAddSuccess
+     | EntryAddError(string) */
+  | EntryChangeDate(Js.Date.t)
   | EntryChangeName(string)
   | EntryChangeWeightLifted(string)
   | LogFetchStart
@@ -69,7 +70,7 @@ type action =
   | DialogReset
   | DialogOpen
   | DialogClose
-  | SetInputMode
+  | SetInputMode(inputMode)
   | SetNumberOfSets(string)
   | SetNumberOfReps(string)
   | AddCustomSet
@@ -81,6 +82,42 @@ type action =
   | RemoveLink(int)
   | ChangeLinkText(int, string)
   | ChangeLinkUrl(int, string);
+
+let getInitialDialogState = () => {
+  isOpen: false,
+  inputMode: SetsReps,
+  numberOfRepsString: "5",
+  numberOfReps: 5,
+  numberOfSetsString: "3",
+  numberOfSets: 3,
+  customSets: [
+    {reps: 5, rpe: None},
+    {reps: 5, rpe: None},
+    {reps: 5, rpe: None},
+  ],
+  customSetsStrings: ["5", "5", "5"],
+  commentIsShown: false,
+  comment: "",
+  canAddLink: true,
+  links: [],
+};
+
+let removeAtIndex = (index, list) =>
+  list
+  |> List.mapi((i, x) => (i, x))
+  |> List.filter(t => t |> fst != index)
+  |> List.map(t => t |> snd);
+
+let changeAtIndex = (index, newValue, list) =>
+  list
+  |> List.mapi((i, x) => (i, x))
+  |> List.map(t =>
+       if (t |> fst == index) {
+         newValue;
+       } else {
+         t |> snd;
+       }
+     );
 
 /* Component template declaration.
    Needs to be **after** state and action declarations! */
@@ -106,32 +143,204 @@ let make = (~testProp, _children) => {
       weightLiftedString: "",
       weightLifted: None,
     },
-    dialogState: {
-      isOpen: false,
-      inputMode: SetsReps,
-      numberOfRepsString: "5",
-      numberOfReps: 5,
-      numberOfSetsString: "5",
-      numberOfSets: 5,
-      customSetsStrings: [],
-      customSets: [],
-      commentIsShown: false,
-      comment: "",
-      canAddLink: true,
-      links: [],
-    },
+    dialogState: getInitialDialogState(),
   },
 
   /* State transitions */
   reducer: (action, state) =>
     switch (action) {
+    | LogFetchStart =>
+      ReasonReact.Update({
+        ...state,
+        liftLogState: {
+          ...state.liftLogState,
+          isLoading: true,
+          networkErrorOccured: false,
+        },
+      })
+    | LogFetchSuccess(title) =>
+      ReasonReact.Update({
+        ...state,
+        liftLogState: {
+          ...state.liftLogState,
+          isLoading: false,
+          networkErrorOccured: false,
+          logTitle: title,
+          errorMessage: None,
+        },
+        /* TODO: entries */
+      })
+    | LogFetchError(errorMessage) =>
+      ReasonReact.Update({
+        ...state,
+        liftLogState: {
+          ...state.liftLogState,
+          isLoading: false,
+          networkErrorOccured: true,
+          errorMessage: Some(errorMessage),
+        },
+      })
+    | EntryChangeDate(newDate) =>
+      ReasonReact.Update({
+        ...state,
+        newEntryState: {
+          ...state.newEntryState,
+          date: newDate,
+        },
+      })
+    | EntryChangeName(newName) =>
+      ReasonReact.Update({
+        ...state,
+        newEntryState: {
+          ...state.newEntryState,
+          name: newName,
+        },
+      })
+    | EntryChangeWeightLifted(newWeightLiftedString) =>
+      ReasonReact.Update({
+        ...state,
+        newEntryState: {
+          ...state.newEntryState,
+          weightLiftedString: newWeightLiftedString,
+        },
+        /* TODO: Parse string to float */
+      })
+    | DialogReset =>
+      ReasonReact.Update({...state, dialogState: getInitialDialogState()})
+    | DialogOpen =>
+      ReasonReact.Update({
+        ...state,
+        dialogState: {
+          ...state.dialogState,
+          isOpen: true,
+        },
+      })
+    | DialogClose =>
+      ReasonReact.Update({
+        ...state,
+        dialogState: {
+          ...state.dialogState,
+          isOpen: false,
+        },
+      })
+    | SetInputMode(inputMode) =>
+      ReasonReact.Update({
+        ...state,
+        dialogState: {
+          ...state.dialogState,
+          inputMode,
+        },
+        /* TODO: Check if it's the first switch */
+      })
+    | SetNumberOfSets(numberOfSets) =>
+      ReasonReact.Update({
+        ...state,
+        dialogState: {
+          ...state.dialogState,
+          numberOfSetsString: numberOfSets,
+        },
+        /* Parse to float */
+      })
+    | SetNumberOfReps(numberOfReps) =>
+      ReasonReact.Update({
+        ...state,
+        dialogState: {
+          ...state.dialogState,
+          numberOfRepsString: numberOfReps,
+        },
+        /* Parse to float */
+      })
+
+    | AddCustomSet =>
+      ReasonReact.Update({
+        ...state,
+        dialogState: {
+          ...state.dialogState,
+          customSets: [
+            {reps: 5, rpe: None},
+            ...state.dialogState.customSets,
+          ],
+        },
+        /* TODO: Fetch the value of the last set */
+        /* TODO: Check if another set can be added first */
+      })
+    | RemoveCustomSet(index) =>
+      ReasonReact.Update({
+        ...state,
+        dialogState: {
+          ...state.dialogState,
+          customSets: state.dialogState.customSets |> removeAtIndex(index),
+          customSetsStrings:
+            state.dialogState.customSetsStrings |> removeAtIndex(index),
+        },
+      })
+    | ChangeCustomSet(index, newSetString) =>
+      ReasonReact.Update({
+        ...state,
+        dialogState: {
+          ...state.dialogState,
+          customSetsStrings:
+            state.dialogState.customSetsStrings
+            |> changeAtIndex(index, newSetString),
+        },
+        /* TODO: customSets */
+      })
+    | ShowComment =>
+      ReasonReact.Update({
+        ...state,
+        dialogState: {
+          ...state.dialogState,
+          commentIsShown: true,
+        },
+      })
+    | ChangeComment(newComment) =>
+      ReasonReact.Update({
+        ...state,
+        dialogState: {
+          ...state.dialogState,
+          comment: newComment,
+        },
+      })
     | AddLink =>
+      /* TODO: Check if link can be added first */
       ReasonReact.Update({
         ...state,
         dialogState: {
           ...state.dialogState,
           links: [{text: "", url: ""}, ...state.dialogState.links],
         },
+      })
+    | RemoveLink(index) =>
+      ReasonReact.Update({
+        ...state,
+        dialogState: {
+          ...state.dialogState,
+          links: state.dialogState.links |> removeAtIndex(index),
+        },
+      })
+    | ChangeLinkText(index, newText) =>
+      ReasonReact.Update({
+        ...state,
+        dialogState:
+          {
+            ...state.dialogState,
+            links:
+              state.dialogState.links
+              |> changeAtIndex(index, {text: newText, url: ""}),
+          },
+          /* TODO: Keep old URL */
+      })
+    | ChangeLinkUrl(index, newUrl) =>
+      ReasonReact.Update({
+        ...state,
+        dialogState:
+          {
+            ...state.dialogState,
+            links:
+              state.dialogState.links
+              |> changeAtIndex(index, {text: "", url: newUrl}),
+          },
+          /* TODO: Keep old text */
       })
     },
 
