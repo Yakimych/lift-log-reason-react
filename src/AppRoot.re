@@ -266,10 +266,7 @@ let make = (~testProp, _children) => {
         ...state,
         dialogState: {
           ...state.dialogState,
-          customSets: [
-            {reps: 5, rpe: None},
-            ...state.dialogState.customSets,
-          ],
+          customSets: state.dialogState.customSets @ [{reps: 5, rpe: None}],
         },
         /* TODO: Fetch the value of the last set */
         /* TODO: Check if another set can be added first */
@@ -317,10 +314,9 @@ let make = (~testProp, _children) => {
         ...state,
         dialogState: {
           ...state.dialogState,
-          links: [
-            {text: "placeholderText", url: "placeholderUrl"},
-            ...state.dialogState.links,
-          ],
+          links:
+            state.dialogState.links
+            @ [{text: "placeholderText", url: "placeholderUrl"}],
         },
       })
     | RemoveLink(index) =>
