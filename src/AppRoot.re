@@ -379,18 +379,32 @@ let make = (~testProp, _children) => {
            |> List.mapi((index, link) =>
                 <li>
                   {ReasonReact.string(link.text ++ ": " ++ link.url)}
-                  <input
-                    value={link.text}
-                    type_="text"
-                    onChange={e =>
-                      self.send(
-                        ChangeLinkText(
-                          index,
-                          ReactEvent.Form.target(e)##value,
-                        ),
-                      )
-                    }
-                  />
+                  <div>
+                    <input
+                      value={link.text}
+                      type_="text"
+                      onChange={e =>
+                        self.send(
+                          ChangeLinkText(
+                            index,
+                            ReactEvent.Form.target(e)##value,
+                          ),
+                        )
+                      }
+                    />
+                    <input
+                      value={link.url}
+                      type_="text"
+                      onChange={e =>
+                        self.send(
+                          ChangeLinkUrl(
+                            index,
+                            ReactEvent.Form.target(e)##value,
+                          ),
+                        )
+                      }
+                    />
+                  </div>
                 </li>
               )
            |> Array.of_list
