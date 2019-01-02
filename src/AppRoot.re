@@ -360,8 +360,22 @@ let make = (~testProp, _children) => {
       <div>
         <ul>
           {links
-           |> List.map(link =>
-                <li> {ReasonReact.string(link.text ++ ": " ++ link.url)} </li>
+           |> List.mapi((index, link) =>
+                <li>
+                  {ReasonReact.string(link.text ++ ": " ++ link.url)}
+                  <input
+                    value={link.text}
+                    type_="text"
+                    onChange={e =>
+                      self.send(
+                        ChangeLinkText(
+                          index,
+                          ReactEvent.Form.target(e)##value,
+                        ),
+                      )
+                    }
+                  />
+                </li>
               )
            |> Array.of_list
            |> ReasonReact.array}
