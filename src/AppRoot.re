@@ -404,6 +404,9 @@ let make = (~testProp, _children) => {
                         )
                       }
                     />
+                    <button onClick={_ => self.send(RemoveLink(index))}>
+                      {ReasonReact.string("X")}
+                    </button>
                   </div>
                 </li>
               )
