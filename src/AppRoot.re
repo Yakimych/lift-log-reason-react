@@ -108,16 +108,26 @@ let removeAtIndex = (index, list) =>
   |> List.filter(t => t |> fst != index)
   |> List.map(t => t |> snd);
 
-let changeAtIndex = (index, newValue, list) =>
+let changeAtIndex = (index, replaceFunc, newValue, list) =>
   list
   |> List.mapi((i, x) => (i, x))
   |> List.map(t =>
        if (t |> fst == index) {
-         newValue;
+         t |> snd |> replaceFunc(newValue);
        } else {
          t |> snd;
        }
      );
+
+let replaceFunc = (newValue, _) => newValue;
+let replaceLinkTextFunc = (newValue, oldValue) => {
+  ...oldValue,
+  text: newValue.text,
+};
+let replaceLinkUrlFunc = (newValue, oldValue) => {
+  ...oldValue,
+  url: newValue.url,
+};
 
 /* Component template declaration.
    Needs to be **after** state and action declarations! */
@@ -281,7 +291,7 @@ let make = (~testProp, _children) => {
           ...state.dialogState,
           customSetsStrings:
             state.dialogState.customSetsStrings
-            |> changeAtIndex(index, newSetString),
+            |> changeAtIndex(index, replaceFunc, newSetString),
         },
         /* TODO: customSets */
       })
@@ -328,9 +338,12 @@ let make = (~testProp, _children) => {
           ...state.dialogState,
           links:
             state.dialogState.links
-            |> changeAtIndex(index, {text: newText, url: ""}),
+            |> changeAtIndex(
+                 index,
+                 replaceLinkTextFunc,
+                 {text: newText, url: ""},
+               ),
         },
-        /* TODO: Keep old URL */
       })
     | ChangeLinkUrl(index, newUrl) =>
       ReasonReact.Update({
@@ -339,9 +352,12 @@ let make = (~testProp, _children) => {
           ...state.dialogState,
           links:
             state.dialogState.links
-            |> changeAtIndex(index, {text: "", url: newUrl}),
+            |> changeAtIndex(
+                 index,
+                 replaceLinkUrlFunc,
+                 {text: "", url: newUrl},
+               ),
         },
-        /* TODO: Keep old text */
       })
     },
 
