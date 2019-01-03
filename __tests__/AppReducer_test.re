@@ -3,6 +3,9 @@ open Expect;
 open AppReducer;
 open AppActions;
 
+let runActions = actions =>
+  actions |> List.fold_left(appReducerFunc, InitialState.getInitialState());
+
 describe("AppReducer", () => {
   test("dialog should be closed from the start", () => {
     let initialState = InitialState.getInitialState();
@@ -11,19 +14,13 @@ describe("AppReducer", () => {
   });
 
   test("dialog should be open after DialogOpen is dispatched", () => {
-    let initialState = InitialState.getInitialState();
-    let actions = [DialogClose, DialogOpen];
-
-    let finalState = actions |> List.fold_left(appReducerFunc, initialState);
+    let finalState = [DialogClose, DialogOpen] |> runActions;
 
     expect(finalState.dialogState.isOpen) |> toBe(true);
   });
 
   test("dialog should be closed after DialogClose is dispatched", () => {
-    let initialState = InitialState.getInitialState();
-    let actions = [DialogOpen, DialogClose];
-
-    let finalState = actions |> List.fold_left(appReducerFunc, initialState);
+    let finalState = [DialogOpen, DialogClose] |> runActions;
 
     expect(finalState.dialogState.isOpen) |> toBe(false);
   });
