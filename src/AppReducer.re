@@ -10,19 +10,17 @@ let replaceLinkUrlFunc = (newValue, oldValue) => {
   url: newValue.url,
 };
 
-let appReducer = (action, state) =>
+let appReducerFunc = (state, action): appState =>
   switch (action) {
-  | LogFetchStart =>
-    ReasonReact.Update({
+  | LogFetchStart => {
       ...state,
       liftLogState: {
         ...state.liftLogState,
         isLoading: true,
         networkErrorOccured: false,
       },
-    })
-  | LogFetchSuccess(title) =>
-    ReasonReact.Update({
+    }
+  | LogFetchSuccess(title) => {
       ...state,
       liftLogState: {
         ...state.liftLogState,
@@ -32,9 +30,8 @@ let appReducer = (action, state) =>
         errorMessage: None,
       },
       /* TODO: entries */
-    })
-  | LogFetchError(errorMessage) =>
-    ReasonReact.Update({
+    }
+  | LogFetchError(errorMessage) => {
       ...state,
       liftLogState: {
         ...state.liftLogState,
@@ -42,83 +39,73 @@ let appReducer = (action, state) =>
         networkErrorOccured: true,
         errorMessage: Some(errorMessage),
       },
-    })
-  | EntryChangeDate(newDate) =>
-    ReasonReact.Update({
+    }
+  | EntryChangeDate(newDate) => {
       ...state,
       newEntryState: {
         ...state.newEntryState,
         date: newDate,
       },
-    })
-  | EntryChangeName(newName) =>
-    ReasonReact.Update({
+    }
+  | EntryChangeName(newName) => {
       ...state,
       newEntryState: {
         ...state.newEntryState,
         name: newName,
       },
-    })
-  | EntryChangeWeightLifted(newWeightLiftedString) =>
-    ReasonReact.Update({
+    }
+  | EntryChangeWeightLifted(newWeightLiftedString) => {
       ...state,
       newEntryState: {
         ...state.newEntryState,
         weightLiftedString: newWeightLiftedString,
       },
       /* TODO: Parse string to float */
-    })
-  | DialogReset =>
-    ReasonReact.Update({
+    }
+  | DialogReset => {
       ...state,
       dialogState: InitialState.getInitialDialogState(),
-    })
-  | DialogOpen =>
-    ReasonReact.Update({
+    }
+  | DialogOpen => {
       ...state,
       dialogState: {
         ...state.dialogState,
         isOpen: true,
       },
-    })
-  | DialogClose =>
-    ReasonReact.Update({
+    }
+  | DialogClose => {
       ...state,
       dialogState: {
         ...state.dialogState,
         isOpen: false,
       },
-    })
-  | SetInputMode(inputMode) =>
-    ReasonReact.Update({
+    }
+  | SetInputMode(inputMode) => {
       ...state,
       dialogState: {
         ...state.dialogState,
         inputMode,
       },
       /* TODO: Check if it's the first switch */
-    })
-  | SetNumberOfSets(numberOfSets) =>
-    ReasonReact.Update({
+    }
+  | SetNumberOfSets(numberOfSets) => {
       ...state,
       dialogState: {
         ...state.dialogState,
         numberOfSetsString: numberOfSets,
       },
       /* Parse to float */
-    })
-  | SetNumberOfReps(numberOfReps) =>
-    ReasonReact.Update({
+    }
+  | SetNumberOfReps(numberOfReps) => {
       ...state,
       dialogState: {
         ...state.dialogState,
         numberOfRepsString: numberOfReps,
       },
       /* Parse to float */
-    })
+    }
 
-  | AddCustomSet =>
-    ReasonReact.Update({
+  | AddCustomSet => {
       ...state,
       dialogState: {
         ...state.dialogState,
@@ -126,9 +113,8 @@ let appReducer = (action, state) =>
       },
       /* TODO: Fetch the value of the last set */
       /* TODO: Check if another set can be added first */
-    })
-  | RemoveCustomSet(index) =>
-    ReasonReact.Update({
+    }
+  | RemoveCustomSet(index) => {
       ...state,
       dialogState: {
         ...state.dialogState,
@@ -137,9 +123,8 @@ let appReducer = (action, state) =>
         customSetsStrings:
           state.dialogState.customSetsStrings |> Utils.removeAtIndex(index),
       },
-    })
-  | ChangeCustomSet(index, newSetString) =>
-    ReasonReact.Update({
+    }
+  | ChangeCustomSet(index, newSetString) => {
       ...state,
       dialogState: {
         ...state.dialogState,
@@ -148,42 +133,38 @@ let appReducer = (action, state) =>
           |> Utils.changeAtIndex(index, Utils.replaceFunc, newSetString),
       },
       /* TODO: customSets */
-    })
-  | ShowComment =>
-    ReasonReact.Update({
+    }
+  | ShowComment => {
       ...state,
       dialogState: {
         ...state.dialogState,
         commentIsShown: true,
       },
-    })
-  | ChangeComment(newComment) =>
-    ReasonReact.Update({
+    }
+  | ChangeComment(newComment) => {
       ...state,
       dialogState: {
         ...state.dialogState,
         comment: newComment,
       },
-    })
+    }
   | AddLink =>
     /* TODO: Check if link can be added first */
-    ReasonReact.Update({
+    {
       ...state,
       dialogState: {
         ...state.dialogState,
         links: state.dialogState.links @ [{text: "text", url: "url"}],
       },
-    })
-  | RemoveLink(index) =>
-    ReasonReact.Update({
+    }
+  | RemoveLink(index) => {
       ...state,
       dialogState: {
         ...state.dialogState,
         links: state.dialogState.links |> Utils.removeAtIndex(index),
       },
-    })
-  | ChangeLinkText(index, newText) =>
-    ReasonReact.Update({
+    }
+  | ChangeLinkText(index, newText) => {
       ...state,
       dialogState: {
         ...state.dialogState,
@@ -195,9 +176,8 @@ let appReducer = (action, state) =>
                {text: newText, url: ""},
              ),
       },
-    })
-  | ChangeLinkUrl(index, newUrl) =>
-    ReasonReact.Update({
+    }
+  | ChangeLinkUrl(index, newUrl) => {
       ...state,
       dialogState: {
         ...state.dialogState,
@@ -209,5 +189,8 @@ let appReducer = (action, state) =>
                {text: "", url: newUrl},
              ),
       },
-    })
+    }
   };
+
+let appReducer = (action, state) =>
+  ReasonReact.Update(appReducerFunc(state, action));
