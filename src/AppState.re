@@ -47,7 +47,7 @@ type dialogState = {
   commentIsShown: bool,
   comment: string,
   canAddLink: bool,
-  links: list(liftInfoLink),
+  links: list(liftInfoLink) /* TODO: Change to array? */
 };
 
 type appState = {
@@ -55,4 +55,3 @@ type appState = {
   newEntryState,
   dialogState,
 };
-/* }; */
