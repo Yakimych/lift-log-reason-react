@@ -1,4 +1,5 @@
 open AppState;
+open BsReactstrap;
 
 let component = ReasonReact.statelessComponent("Links");
 
@@ -13,38 +14,49 @@ let make =
     ) => {
   ...component,
   render: _self =>
-    <div>
-      <ul>
-        {links
-         |> List.mapi((index, link) =>
-              <li>
-                {ReasonReact.string(link.text ++ ": " ++ link.url)}
-                <div>
-                  <input
-                    value={link.text}
-                    type_="text"
-                    onChange={e =>
-                      changeLinkText(index, ReactEvent.Form.target(e)##value)
-                    }
-                  />
-                  <input
-                    value={link.url}
-                    type_="text"
-                    onChange={e =>
-                      changeLinkUrl(index, ReactEvent.Form.target(e)##value)
-                    }
-                  />
-                  <button onClick={_ => removeLink(index)}>
+    <div className="mt-2">
+      {links
+       |> List.mapi((index, link) =>
+            <div
+              className="d-flex align-items-start px-1"
+              key={string_of_int(index)}>
+              {ReasonReact.string(link.text ++ ": " ++ link.url)}
+              <Input
+                name="text"
+                bsSize="sm"
+                className="mr-3 w-50"
+                value={link.text}
+                placeholder="Display text"
+                type_="text"
+                onChange={e =>
+                  changeLinkText(index, ReactEvent.Form.target(e)##value)
+                }
+              />
+              <InputGroup>
+                <Input
+                  name="url"
+                  bsSize="sm"
+                  value={link.url}
+                  placeholder="Url"
+                  type_="text"
+                  onChange={e =>
+                    changeLinkUrl(index, ReactEvent.Form.target(e)##value)
+                  }
+                />
+                <InputGroupAddon addonType="append">
+                  <div
+                    className="input-group-text remove-icon-wrapper"
+                    onClick={_ => removeLink(index)}>
                     {ReasonReact.string("X")}
-                  </button>
-                </div>
-              </li>
-            )
-         |> Array.of_list
-         |> ReasonReact.array}
-      </ul>
-      <button onClick={_ => addLink()}>
+                  </div>
+                </InputGroupAddon>
+              </InputGroup>
+            </div>
+          )
+       |> Array.of_list
+       |> ReasonReact.array}
+      <Button onClick={_ => addLink()} size="sm" className="mt-2">
         {ReasonReact.string("Add link")}
-      </button>
+      </Button>
     </div>,
 };

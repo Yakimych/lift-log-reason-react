@@ -1,6 +1,10 @@
 open AppState;
 open AppActions;
 
+[%bs.raw
+  {|require('./../node_modules/bootstrap/dist/css/bootstrap.min.css')|}
+];
+
 let component = ReasonReact.reducerComponent("AppRoot");
 
 let make = (~testProp, _children) => {
