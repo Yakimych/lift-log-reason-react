@@ -33,12 +33,23 @@ describe("AppReducer", () => {
       expect(finalState.dialogState.links |> List.length) |> toBe(3);
     });
 
-    test("text should be changed correctly", () => {
+    test("should change text and url", () => {
       let linkText = "testLink1";
+      let linkUrl = "testUrl1";
       let finalState =
-        [DialogOpen, AddLink, ChangeLinkText(0, linkText)] |> runActions;
-      expect((finalState.dialogState.links |> List.hd).text)
-      |> toBe(linkText);
+        [
+          DialogOpen,
+          AddLink,
+          AddLink,
+          AddLink,
+          ChangeLinkUrl(0, linkUrl),
+          ChangeLinkText(0, linkText),
+        ]
+        |> runActions;
+
+      let changedLink = finalState.dialogState.links |> List.hd;
+      expect((changedLink.text, changedLink.url))
+      |> toEqual((linkText, linkUrl));
     });
   });
 });
