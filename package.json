@@ -23,6 +23,7 @@
     "@githubprimer/octicons-react": "^8.2.0",
     "bootstrap": "^4.2.1",
     "react": "^16.2.0",
+    "react-animate-height": "^2.0.7",
     "react-dom": "^16.2.0",
     "reason-react": ">=0.4.0"
   },
