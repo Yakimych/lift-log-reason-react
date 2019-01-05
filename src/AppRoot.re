@@ -24,6 +24,7 @@ let make = (~testProp, _children) => {
          ReasonReact.string(testProp) : ReasonReact.null}
       <AddReps
         dialogState={self.state.dialogState}
+        closeDialog={_ => self.send(DialogClose)}
         addLink={_ => self.send(AddLink)}
         removeLink={index => self.send(RemoveLink(index))}
         changeLinkText={(index, newText) =>
