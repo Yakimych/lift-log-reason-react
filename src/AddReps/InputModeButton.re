@@ -13,7 +13,7 @@ let make =
       ~id: string,
       ~buttonMode: inputMode,
       ~currentMode: inputMode,
-      ~onClick,
+      ~onClick: inputMode => unit,
       children,
     ) => {
   ...component,
@@ -30,11 +30,17 @@ let make =
     let className = active ? "" : "btn-primary--lighter";
     <>
       <Button
-        id color="primary" size="sm" className onClick outline=true active>
+        id
+        color="primary"
+        size="sm"
+        className
+        onClick={_ => onClick(buttonMode)}
+        outline=true
+        active>
         children
       </Button>
       <Tooltip
-        target="tooltipbutton"
+        target="customRepsButton"
         isOpen={self.state.tooltipIsOpen}
         toggle={_ => self.send(ToggleTooltip)}>
         {ReasonReact.string("RPE format: 'Reps@RPE'. E.g. 5@9.5")}
