@@ -110,6 +110,7 @@ let appReducerFunc = (state, action): appState =>
       dialogState: {
         ...state.dialogState,
         customSets: state.dialogState.customSets @ [{reps: 5, rpe: None}],
+        customSetsStrings: state.dialogState.customSetsStrings @ ["5"],
       },
       /* TODO: Fetch the value of the last set */
       /* TODO: Check if another set can be added first */

@@ -37,7 +37,14 @@ let make = (~testProp, _children) => {
       <AddReps
         dialogState={self.state.dialogState}
         closeDialog={_ => self.send(DialogClose)}
-        changeInputMode={mode => self.send(SetInputMode(mode))}
+        onInputModeChange={mode => self.send(SetInputMode(mode))}
+        onAddCustomSet={_ => self.send(AddCustomSet)}
+        onRemoveCustomSet={index => self.send(RemoveCustomSet(index))}
+        onCustomSetChange={(index, value) =>
+          self.send(ChangeCustomSet(index, value))
+        }
+        onNumberOfSetsChange={value => self.send(SetNumberOfSets(value))}
+        onNumberOfRepsChange={value => self.send(SetNumberOfReps(value))}
         addLink={_ => self.send(AddLink)}
         removeLink={index => self.send(RemoveLink(index))}
         changeLinkText={(index, newText) =>
