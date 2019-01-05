@@ -8,6 +8,7 @@ let component = ReasonReact.statelessComponent("AddReps");
 let make =
     (
       ~dialogState: dialogState,
+      ~closeDialog,
       ~addLink,
       ~removeLink,
       ~changeLinkText,
@@ -16,8 +17,7 @@ let make =
     ) => {
   ...component,
   render: _self => {
-    /* <Modal isOpen={props.isOpen} toggle={props.close}> */
-    <Modal isOpen=true>
+    <Modal isOpen={dialogState.isOpen} toggle=closeDialog>
 
         <ModalHeader>
           {ReasonReact.string("Input sets and reps")}
@@ -61,7 +61,9 @@ let make =
         </ModalBody>
         <ModalFooter>
           <Button color="primary"> {ReasonReact.string("Save")} </Button>
-          <Button color="secondary"> {ReasonReact.string("Cancel")} </Button>
+          <Button color="secondary" onClick=closeDialog>
+            {ReasonReact.string("Cancel")}
+          </Button>
         </ModalFooter>
       </Modal>;
       /* <Button color="primary" onClick={props.onSave}> Save </Button>
