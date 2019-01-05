@@ -37,6 +37,7 @@ let make = (~testProp, _children) => {
       <AddReps
         dialogState={self.state.dialogState}
         closeDialog={_ => self.send(DialogClose)}
+        changeInputMode={mode => self.send(SetInputMode(mode))}
         addLink={_ => self.send(AddLink)}
         removeLink={index => self.send(RemoveLink(index))}
         changeLinkText={(index, newText) =>

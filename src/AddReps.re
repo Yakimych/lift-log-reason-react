@@ -9,6 +9,7 @@ let make =
     (
       ~dialogState: dialogState,
       ~closeDialog,
+      ~changeInputMode,
       ~addLink,
       ~removeLink,
       ~changeLinkText,
@@ -24,14 +25,17 @@ let make =
         </ModalHeader>
         <ModalBody>
           <div className="px-1">
-            /* <div className="d-flex">
-                 <InputModeSwitch
-                   mode={props.setsReps.mode}
-                   onChange={props.onInputModeChange}
-                 />
-                 <div className="lead ml-4"> {formatRepsSets(props.setsReps)} </div>
-               </div>
-               <div className="my-3">
+            <div className="d-flex">
+
+                <InputModeSwitch
+                  mode={dialogState.inputMode}
+                  onChange=changeInputMode
+                />
+              </div>
+              /* <div className="lead ml-4">
+                   {formatRepsSets(props.setsReps)}
+                 </div> */
+            /* <div className="my-3">
                  {isSetsRepsMode(props) ?
                     <SetsRepsInput
                       numberOfSets={props.setsReps.numberOfSets}
@@ -47,17 +51,16 @@ let make =
                       onChange={props.onLiftLogRepsChange}
                     />}
                </div> */
-
-              <div className="d-flex flex-column align-items-start">
-                <Links
-                  links={dialogState.links}
-                  addLink
-                  removeLink
-                  changeLinkText
-                  changeLinkUrl
-                />
-              </div>
+            <div className="d-flex flex-column align-items-start">
+              <Links
+                links={dialogState.links}
+                addLink
+                removeLink
+                changeLinkText
+                changeLinkUrl
+              />
             </div>
+          </div>
         </ModalBody>
         <ModalFooter>
           <Button color="primary"> {ReasonReact.string("Save")} </Button>
