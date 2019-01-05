@@ -4,6 +4,7 @@ open AppActions;
 [%bs.raw
   {|require('./../node_modules/bootstrap/dist/css/bootstrap.min.css')|}
 ];
+[%bs.raw {|require('./AppRoot.css')|}];
 
 let component = ReasonReact.reducerComponent("AppRoot");
 
