@@ -1,5 +1,6 @@
 open AppState;
 open AppActions;
+open BsReactstrap;
 
 [%bs.raw
   {|require('./../node_modules/bootstrap/dist/css/bootstrap.min.css')|}
@@ -22,6 +23,17 @@ let make = (~testProp, _children) => {
       <span> {ReasonReact.string(numberOfLinksText)} </span>
       {self.state.liftLogState.isLoading ?
          ReasonReact.string(testProp) : ReasonReact.null}
+      <div className="col d-flex align-items-center">
+        /* <span className="mr-2"> {formatRepsSets(props.setsReps)} </span> */
+        /* disabled={
+             props.disabled || !canAddEntry(props.name, props.weightLifted)
+           } */
+
+          <Button
+            size="sm" color="primary" onClick={_ => self.send(DialogOpen)}>
+            {ReasonReact.string("Add")}
+          </Button>
+        </div>
       <AddReps
         dialogState={self.state.dialogState}
         closeDialog={_ => self.send(DialogClose)}
