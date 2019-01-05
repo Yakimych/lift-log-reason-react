@@ -40,21 +40,21 @@ let appReducerFunc = (state, action): appState =>
         errorMessage: Some(errorMessage),
       },
     }
-  | EntryChangeDate(newDate) => {
+  | ChangeDate(newDate) => {
       ...state,
       newEntryState: {
         ...state.newEntryState,
         date: newDate,
       },
     }
-  | EntryChangeName(newName) => {
+  | ChangeName(newName) => {
       ...state,
       newEntryState: {
         ...state.newEntryState,
         name: newName,
       },
     }
-  | EntryChangeWeightLifted(newWeightLiftedString) => {
+  | ChangeWeightLifted(newWeightLiftedString) => {
       ...state,
       newEntryState: {
         ...state.newEntryState,

@@ -4,9 +4,9 @@ type action =
   /* | EntryAddStart
      | EntryAddSuccess
      | EntryAddError(string) */
-  | EntryChangeDate(Js.Date.t)
-  | EntryChangeName(string)
-  | EntryChangeWeightLifted(string)
+  | ChangeDate(Js.Date.t)
+  | ChangeName(string)
+  | ChangeWeightLifted(string)
   | LogFetchStart
   | LogFetchSuccess(string) /* TODO: LiftLog */
   | LogFetchError(string)

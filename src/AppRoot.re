@@ -23,16 +23,57 @@ let make = (~testProp, _children) => {
       <span> {ReasonReact.string(numberOfLinksText)} </span>
       {self.state.liftLogState.isLoading ?
          ReasonReact.string(testProp) : ReasonReact.null}
-      <div className="col d-flex align-items-center">
-        /* <span className="mr-2"> {formatRepsSets(props.setsReps)} </span> */
-        /* disabled={
-             props.disabled || !canAddEntry(props.name, props.weightLifted)
-           } */
+      <div className="row">
+        /* <div className="col">
+             <DatePicker
+               disabled={props.disabled}
+               dateFormat="YYYY-MM-DD"
+               selected={props.date}
+               onChange={props.changeDate}
+               className="form-control form-control-sm log-entry-input"
+             />
+           </div> */
 
-          <Button
-            size="sm" color="primary" onClick={_ => self.send(DialogOpen)}>
-            {ReasonReact.string("Add")}
-          </Button>
+          <div className="col">
+            <input
+              /* disabled={props.disabled} */
+              className="form-control form-control-sm log-entry-input"
+              type_="text"
+              placeholder="Name"
+              maxLength=50
+              value={self.state.newEntryState.name}
+              onChange={e =>
+                self.send(ChangeName(ReactEvent.Form.target(e)##value))
+              }
+            />
+          </div>
+          <div className="col">
+            <input
+              /* disabled={props.disabled} */
+              className="form-control form-control-sm log-entry-input"
+              type_="text"
+              placeholder="Weight"
+              value={self.state.newEntryState.weightLiftedString}
+              onChange={e =>
+                self.send(
+                  ChangeWeightLifted(ReactEvent.Form.target(e)##value),
+                )
+              }
+            />
+          </div>
+          <div className="col d-flex align-items-center">
+            /* <span className="mr-2"> {formatRepsSets(props.setsReps)} </span> */
+            /* disabled={
+                 props.disabled || !canAddEntry(props.name, props.weightLifted)
+               } */
+
+              <Button
+                size="sm"
+                color="primary"
+                onClick={_ => self.send(DialogOpen)}>
+                {ReasonReact.string("Add")}
+              </Button>
+            </div>
         </div>
       <AddReps
         dialogState={self.state.dialogState}
