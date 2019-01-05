@@ -1,6 +1,9 @@
 open AppState;
 open BsReactstrap;
 
+[@bs.module "@githubprimer/octicons-react"]
+external getIconByName: string => 'a = "getIconByName";
+
 let component = ReasonReact.statelessComponent("Links");
 
 let make =
@@ -47,7 +50,7 @@ let make =
                   <div
                     className="input-group-text remove-icon-wrapper"
                     onClick={_ => removeLink(index)}>
-                    {ReasonReact.string("X")}
+                    <OcticonWrapper icon={getIconByName("x")} />
                   </div>
                 </InputGroupAddon>
               </InputGroup>
