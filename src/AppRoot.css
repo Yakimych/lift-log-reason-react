@@ -50,3 +50,9 @@
 .btn-primary--lighter:hover {
   background-color: #449eff;
 }
+
+/* From AddLogEntry */
+.btn-add-entry {
+  width: 95%;
+  margin: 10px;
+}
