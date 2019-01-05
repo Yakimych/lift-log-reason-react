@@ -1,0 +1,23 @@
+/* id of the body is used to override bootstrap rules */
+#lift-log-app-body .set-rep-input {
+  width: 40px;
+}
+
+.custom-sets-input-group {
+  display: flex;
+  align-items: center;
+}
+
+.custom-sets-input-group:first-child {
+  padding-right: 20px;
+}
+
+.custom-sets-input-group .remove-icon-wrapper {
+  width: 21px;
+  height: 100%;
+}
+
+/* negative left and right margins */
+.mx--1 {
+  margin: 0 -0.25rem;
+}
