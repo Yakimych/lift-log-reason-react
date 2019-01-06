@@ -26,6 +26,11 @@
   ],
   "suffix": ".bs.js",
   "namespace": true,
-  "bs-dependencies": ["reason-react", "@ahrefs/bs-reactstrap"],
+  "bs-dependencies": [
+    "reason-react",
+    "@ahrefs/bs-reactstrap",
+    "bs-axios",
+    "@glennsl/bs-json"
+  ],
   "refmt": 3
 }

@@ -8,6 +8,31 @@ open BsReactstrap;
 [%bs.raw {|require('./AppRoot.css')|}];
 [%bs.raw {|require('react-datepicker/dist/react-datepicker.css')|}];
 
+module Decode = {
+  let set = json => {
+    open! Json.Decode;
+    {
+      reps: json |> field("numberOfReps", int),
+      rpe: json |> field("rpe", optional(float)),
+    };
+  };
+  let logEntry = json => {
+    open! Json.Decode;
+    {
+      name: json |> field("name", string),
+      weightLifted: json |> field("weightLifted", float),
+      date: json |> field("date", date),
+      sets: json |> field("sets", list(set)),
+    };
+  };
+  let liftLog = json =>
+    Json.Decode.{
+      name: json |> field("name", string),
+      title: json |> field("title", string),
+      entries: json |> field("entries", list(logEntry)),
+    };
+};
+
 let component = ReasonReact.reducerComponent("AppRoot");
 
 let make = (~testProp, _children) => {
@@ -25,18 +50,27 @@ let make = (~testProp, _children) => {
             isLoading: true,
           },
         },
-        self => {
-          Js.log("Make API call");
-          self.send(LogFetchSuccess("Success"));
-        },
+        self =>
+          Js.Promise.(
+            Axios.get("http://localhost:5000/api/LiftLogs/testlog")
+            |> then_(response =>
+                 response##data
+                 |> Decode.liftLog
+                 |> (liftLog => self.send(LogFetchSuccess(liftLog)))
+                 |> resolve
+               )
+            |> catch(error => resolve(Js.log(error)))
+            |> ignore
+          ),
       )
     | otherAction => AppReducer.appReducer(otherAction, state)
     },
 
+  didMount: self => self.send(LogFetchStart),
   render: self => {
     let numberOfLinksText =
-      "Number of links: "
-      ++ string_of_int(self.state.dialogState.links |> List.length);
+      "Number of entries: "
+      ++ string_of_int(self.state.liftLogState.logEntries |> List.length);
     <div className="add-log-entry">
       <span> {ReasonReact.string(numberOfLinksText)} </span>
       {self.state.liftLogState.isLoading ?

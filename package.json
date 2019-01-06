@@ -1,5 +1,5 @@
 {
-  "name": "my-react-app",
+  "name": "lift-log-reason-react",
   "version": "0.1.0",
   "scripts": {
     "build": "bsb -make-world",
@@ -21,7 +21,9 @@
   "dependencies": {
     "@ahrefs/bs-reactstrap": "^0.5.9",
     "@githubprimer/octicons-react": "^8.2.0",
+    "@glennsl/bs-json": "^3.0.0",
     "bootstrap": "^4.2.1",
+    "bs-axios": "0.0.39",
     "react": "^16.2.0",
     "react-animate-height": "^2.0.7",
     "react-datepicker": "^2.0.0",

@@ -20,16 +20,15 @@ let appReducerFunc = (state, action): appState =>
         networkErrorOccured: false,
       },
     }
-  | LogFetchSuccess(title) => {
+  | LogFetchSuccess(liftLog) => {
       ...state,
       liftLogState: {
-        ...state.liftLogState,
         isLoading: false,
         networkErrorOccured: false,
-        logTitle: title,
+        logTitle: liftLog.title,
+        logEntries: liftLog.entries,
         errorMessage: None,
       },
-      /* TODO: entries */
     }
   | LogFetchError(errorMessage) => {
       ...state,
