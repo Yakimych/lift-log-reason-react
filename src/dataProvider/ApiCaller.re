@@ -1,6 +1,8 @@
-let apiBaseUrl = "http://localhost:5000/api/LiftLogs/";
+[@bs.val] external apiBaseUrl: string = "process.env.REACT_APP_API_BASE_URL";
 
-let getLiftLogUrl = logName => apiBaseUrl ++ logName;
+let liftLogsUrl = apiBaseUrl ++ "/LiftLogs/";
+
+let getLiftLogUrl = logName => liftLogsUrl ++ logName;
 
 let fetchLiftLog = (logName, successAction, errorAction) => {
   Js.Promise.(
