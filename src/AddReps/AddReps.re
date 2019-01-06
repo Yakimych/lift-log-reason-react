@@ -15,6 +15,8 @@ let make =
       ~onCustomSetChange,
       ~onNumberOfSetsChange,
       ~onNumberOfRepsChange,
+      ~openComment,
+      ~changeComment,
       ~addLink,
       ~removeLink,
       ~changeLinkText,
@@ -54,6 +56,12 @@ let make =
                />}
           </div>
           <div className="d-flex flex-column align-items-start">
+            <Comment
+              comment={dialogState.comment}
+              hasComment={!dialogState.commentIsShown}
+              onCommentChange=changeComment
+              onOpenComment=openComment
+            />
             <Links
               links={dialogState.links}
               addLink
