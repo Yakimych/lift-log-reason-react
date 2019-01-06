@@ -14,7 +14,24 @@ let make = (~testProp, _children) => {
   ...component,
 
   initialState: () => InitialState.getInitialState(),
-  reducer: AppReducer.appReducer,
+  reducer: (action, state) =>
+    switch (action) {
+    | LogFetchStart =>
+      ReasonReact.UpdateWithSideEffects(
+        {
+          ...state,
+          liftLogState: {
+            ...state.liftLogState,
+            isLoading: true,
+          },
+        },
+        self => {
+          Js.log("Make API call");
+          self.send(LogFetchSuccess("Success"));
+        },
+      )
+    | otherAction => AppReducer.appReducer(otherAction, state)
+    },
 
   render: self => {
     let numberOfLinksText =
