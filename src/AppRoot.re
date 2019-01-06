@@ -25,20 +25,11 @@ let make = _children => {
             isLoading: true,
           },
         },
-        self =>
-          Js.Promise.(
-            Axios.get("http://localhost:5000/api/LiftLogs/testlog")
-            |> then_(response =>
-                 response##data
-                 |> Decode.liftLog
-                 |> (liftLog => self.send(LogFetchSuccess(liftLog)))
-                 |> resolve
-               )
-            |> catch(_ =>
-                 self.send(LogFetchError("Error fetching log")) |> resolve
-               )
-            |> ignore
-          ),
+        self => {
+          let successAction = liftLog => self.send(LogFetchSuccess(liftLog));
+          let errorAction = self.send(LogFetchError("Error fetching log"));
+          ApiCaller.fetchLiftLog("testLog", successAction, errorAction);
+        },
       )
     | otherAction => AppReducer.appReducer(otherAction, state)
     },
