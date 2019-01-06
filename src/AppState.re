@@ -1,4 +1,3 @@
-/* module AppState2 = { */
 type set = {
   reps: int,
   rpe: option(float),
