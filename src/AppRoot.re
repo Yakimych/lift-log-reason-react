@@ -86,6 +86,8 @@ let make = (~testProp, _children) => {
         }
         onNumberOfSetsChange={value => self.send(SetNumberOfSets(value))}
         onNumberOfRepsChange={value => self.send(SetNumberOfReps(value))}
+        openComment={_ => self.send(ShowComment)}
+        changeComment={value => self.send(ChangeComment(value))}
         addLink={_ => self.send(AddLink)}
         removeLink={index => self.send(RemoveLink(index))}
         changeLinkText={(index, newText) =>
