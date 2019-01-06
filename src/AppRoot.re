@@ -6,6 +6,7 @@ open BsReactstrap;
   {|require('./../node_modules/bootstrap/dist/css/bootstrap.min.css')|}
 ];
 [%bs.raw {|require('./AppRoot.css')|}];
+[%bs.raw {|require('react-datepicker/dist/react-datepicker.css')|}];
 
 let component = ReasonReact.reducerComponent("AppRoot");
 
@@ -24,57 +25,54 @@ let make = (~testProp, _children) => {
       {self.state.liftLogState.isLoading ?
          ReasonReact.string(testProp) : ReasonReact.null}
       <div className="row">
-        /* <div className="col">
-             <DatePicker
-               disabled={props.disabled}
-               dateFormat="YYYY-MM-DD"
-               selected={props.date}
-               onChange={props.changeDate}
-               className="form-control form-control-sm log-entry-input"
-             />
-           </div> */
-
-          <div className="col">
-            <input
-              /* disabled={props.disabled} */
-              className="form-control form-control-sm log-entry-input"
-              type_="text"
-              placeholder="Name"
-              maxLength=50
-              value={self.state.newEntryState.name}
-              onChange={e =>
-                self.send(ChangeName(ReactEvent.Form.target(e)##value))
-              }
-            />
-          </div>
-          <div className="col">
-            <input
-              /* disabled={props.disabled} */
-              className="form-control form-control-sm log-entry-input"
-              type_="text"
-              placeholder="Weight"
-              value={self.state.newEntryState.weightLiftedString}
-              onChange={e =>
-                self.send(
-                  ChangeWeightLifted(ReactEvent.Form.target(e)##value),
-                )
-              }
-            />
-          </div>
-          <div className="col d-flex align-items-center">
-            /* <span className="mr-2"> {formatRepsSets(props.setsReps)} </span> */
-            /* disabled={
-                 props.disabled || !canAddEntry(props.name, props.weightLifted)
-               } */
-
-              <Button
-                size="sm"
-                color="primary"
-                onClick={_ => self.send(DialogOpen)}>
-                {ReasonReact.string("Add")}
-              </Button>
-            </div>
+        <div className="col">
+          <DatePickerWrapper
+            disabled=false
+            dateFormat="YYYY-MM-DD"
+            selected={self.state.newEntryState.date}
+            onChange={e => self.send(ChangeDate(e))}
+            className="form-control form-control-sm log-entry-input"
+          />
         </div>
+        <div className="col">
+          <input
+            /* disabled={props.disabled} */
+            className="form-control form-control-sm log-entry-input"
+            type_="text"
+            placeholder="Name"
+            maxLength=50
+            value={self.state.newEntryState.name}
+            onChange={e =>
+              self.send(ChangeName(ReactEvent.Form.target(e)##value))
+            }
+          />
+        </div>
+        <div className="col">
+          <input
+            /* disabled={props.disabled} */
+            className="form-control form-control-sm log-entry-input"
+            type_="text"
+            placeholder="Weight"
+            value={self.state.newEntryState.weightLiftedString}
+            onChange={e =>
+              self.send(
+                ChangeWeightLifted(ReactEvent.Form.target(e)##value),
+              )
+            }
+          />
+        </div>
+        <div className="col d-flex align-items-center">
+          /* <span className="mr-2"> {formatRepsSets(props.setsReps)} </span> */
+          /* disabled={
+               props.disabled || !canAddEntry(props.name, props.weightLifted)
+             } */
+
+            <Button
+              size="sm" color="primary" onClick={_ => self.send(DialogOpen)}>
+              {ReasonReact.string("Add")}
+            </Button>
+          </div>
+      </div>
       <AddReps
         dialogState={self.state.dialogState}
         closeDialog={_ => self.send(DialogClose)}
