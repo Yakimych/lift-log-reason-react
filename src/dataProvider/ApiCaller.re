@@ -10,7 +10,7 @@ let fetchLiftLog = (logName, successAction, errorAction) => {
     |> then_(response =>
          response##data |> Decode.liftLog |> successAction |> resolve
        )
-    |> catch(_ => errorAction |> resolve)
+    |> catch(error => error |> errorAction |> resolve)
     |> ignore
   );
 };

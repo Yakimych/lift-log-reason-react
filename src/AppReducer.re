@@ -10,7 +10,7 @@ let replaceLinkUrlFunc = (newValue, oldValue) => {
   url: newValue.url,
 };
 
-let appReducerFunc = (state, action): appState =>
+let appReducer = (state, action): appState =>
   switch (action) {
   | LogFetchStart => {
       ...state,
@@ -191,6 +191,3 @@ let appReducerFunc = (state, action): appState =>
       },
     }
   };
-
-let appReducer = (action, state) =>
-  ReasonReact.Update(appReducerFunc(state, action));
