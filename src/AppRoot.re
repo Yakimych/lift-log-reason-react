@@ -59,7 +59,9 @@ let make = (~testProp, _children) => {
                  |> (liftLog => self.send(LogFetchSuccess(liftLog)))
                  |> resolve
                )
-            |> catch(error => resolve(Js.log(error)))
+            |> catch(_ =>
+                 self.send(LogFetchError("Error fetching log")) |> resolve
+               )
             |> ignore
           ),
       )
