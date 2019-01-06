@@ -1,1 +1,1 @@
-ReactDOMRe.renderToElementWithId(<AppRoot testProp="TestValue" />, "root");
+ReactDOMRe.renderToElementWithId(<AppRoot />, "root");

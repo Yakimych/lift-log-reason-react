@@ -10,7 +10,7 @@ open BsReactstrap;
 
 let component = ReasonReact.reducerComponent("AppRoot");
 
-let make = (~testProp, _children) => {
+let make = _children => {
   ...component,
 
   initialState: () => InitialState.getInitialState(),
@@ -45,13 +45,16 @@ let make = (~testProp, _children) => {
 
   didMount: self => self.send(LogFetchStart),
   render: self => {
-    let numberOfLinksText =
+    let numberOfEntriesText =
       "Number of entries: "
       ++ string_of_int(self.state.liftLogState.logEntries |> List.length);
     <div className="add-log-entry">
-      <span> {ReasonReact.string(numberOfLinksText)} </span>
-      {self.state.liftLogState.isLoading ?
-         ReasonReact.string(testProp) : ReasonReact.null}
+      <span>
+        {ReasonReact.string(
+           self.state.liftLogState.isLoading ?
+             "Loading..." : numberOfEntriesText,
+         )}
+      </span>
       <div className="row">
         <div className="col">
           <DatePickerWrapper
