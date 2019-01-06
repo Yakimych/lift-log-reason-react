@@ -14,25 +14,23 @@ let make = _children => {
   ...component,
 
   initialState: () => InitialState.getInitialState(),
-  reducer: (action, state) =>
+  reducer: (action, state) => {
+    let newState = AppReducer.appReducer(state, action);
+
     switch (action) {
     | LogFetchStart =>
       ReasonReact.UpdateWithSideEffects(
-        {
-          ...state,
-          liftLogState: {
-            ...state.liftLogState,
-            isLoading: true,
-          },
-        },
+        newState,
         self => {
           let successAction = liftLog => self.send(LogFetchSuccess(liftLog));
-          let errorAction = self.send(LogFetchError("Error fetching log"));
+          let errorAction = _error =>
+            self.send(LogFetchError("Error fetching log"));
           ApiCaller.fetchLiftLog("testLog", successAction, errorAction);
         },
       )
-    | otherAction => AppReducer.appReducer(otherAction, state)
-    },
+    | _ => ReasonReact.Update(newState)
+    };
+  },
 
   didMount: self => self.send(LogFetchStart),
   render: self => {

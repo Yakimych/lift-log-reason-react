@@ -4,7 +4,7 @@ open AppReducer;
 open AppActions;
 
 let runActions = actions =>
-  actions |> List.fold_left(appReducerFunc, InitialState.getInitialState());
+  actions |> List.fold_left(appReducer, InitialState.getInitialState());
 
 describe("AppReducer", () => {
   describe("dialog", () => {
