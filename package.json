@@ -24,6 +24,7 @@
     "@glennsl/bs-json": "^3.0.0",
     "bootstrap": "^4.2.1",
     "bs-axios": "0.0.39",
+    "dotenv-webpack": "^1.6.0",
     "react": "^16.2.0",
     "react-animate-height": "^2.0.7",
     "react-datepicker": "^2.0.0",
