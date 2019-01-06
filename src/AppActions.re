@@ -8,7 +8,7 @@ type action =
   | ChangeName(string)
   | ChangeWeightLifted(string)
   | LogFetchStart
-  | LogFetchSuccess(string) /* TODO: LiftLog */
+  | LogFetchSuccess(liftLog)
   | LogFetchError(string)
   | DialogReset
   | DialogOpen

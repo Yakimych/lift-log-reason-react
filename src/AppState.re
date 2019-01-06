@@ -10,6 +10,12 @@ type liftLogEntry = {
   sets: list(set),
 };
 
+type liftLog = {
+  name: string,
+  title: string,
+  entries: list(liftLogEntry),
+};
+
 type liftLogState = {
   isLoading: bool,
   networkErrorOccured: bool,
