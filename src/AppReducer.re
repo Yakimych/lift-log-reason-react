@@ -39,6 +39,34 @@ let appReducer = (state, action): appState =>
         errorMessage: Some(errorMessage),
       },
     }
+  /* TODO: Consolidate with Loading LiftLog? ApiRequestStart/Success/Error? */
+  | EntryAddStart => {
+      ...state,
+      liftLogState: {
+        ...state.liftLogState,
+        isLoading: true,
+        networkErrorOccured: false,
+        errorMessage: None,
+      },
+    }
+  | EntryAddSuccess => {
+      ...state,
+      liftLogState: {
+        ...state.liftLogState,
+        isLoading: false,
+        networkErrorOccured: false,
+        errorMessage: None,
+      },
+    }
+  | EntryAddError(errorMessage) => {
+      ...state,
+      liftLogState: {
+        ...state.liftLogState,
+        isLoading: false,
+        networkErrorOccured: true,
+        errorMessage: Some(errorMessage),
+      },
+    }
   | ChangeDate(newDate) => {
       ...state,
       newEntryState: {

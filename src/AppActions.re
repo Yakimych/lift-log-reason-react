@@ -1,9 +1,9 @@
 open AppState;
 
 type action =
-  /* | EntryAddStart
-     | EntryAddSuccess
-     | EntryAddError(string) */
+  | EntryAddStart
+  | EntryAddSuccess
+  | EntryAddError(string)
   | ChangeDate(Js.Date.t)
   | ChangeName(string)
   | ChangeWeightLifted(string)
