@@ -8,6 +8,13 @@ open BsReactstrap;
 [%bs.raw {|require('./AppRoot.css')|}];
 [%bs.raw {|require('react-datepicker/dist/react-datepicker.css')|}];
 
+/* TODO: Option.map? Option.withDefault? */
+let mapWeightLifted = (maybeWeight: option(float)) =>
+  switch (maybeWeight) {
+  | Some(weight) => weight
+  | None => 0.0
+  };
+
 let component = ReasonReact.reducerComponent("AppRoot");
 
 let make = _children => {
@@ -32,15 +39,18 @@ let make = _children => {
       ReasonReact.UpdateWithSideEffects(
         newState,
         self => {
+          let {newEntryState, dialogState} = self.state;
+          let entry: liftLogEntry = {
+            name: newEntryState.name,
+            weightLifted: newEntryState.weightLifted |> mapWeightLifted,
+            date: newEntryState.date,
+            sets: dialogState.customSets,
+          };
+
           let successAction = _ => self.send(LogFetchStart);
           let errorAction = _ =>
             self.send(EntryAddError("Failed to add entry"));
-          ApiCaller.addLogEntry(
-            "benchpress",
-            self.state.newEntryState,
-            successAction,
-            errorAction,
-          );
+          ApiCaller.addLogEntry("testlog", entry, successAction, errorAction);
         },
       )
     | _ => ReasonReact.Update(newState)

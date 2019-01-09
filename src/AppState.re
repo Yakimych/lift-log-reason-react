@@ -28,7 +28,7 @@ type newEntryState = {
   date: Js.Date.t,
   name: string,
   weightLiftedString: string,
-  weightLifted: option(int),
+  weightLifted: option(float),
 };
 
 type inputMode =
