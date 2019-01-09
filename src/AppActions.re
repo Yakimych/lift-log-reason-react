@@ -2,7 +2,7 @@ open AppState;
 
 type action =
   | EntryAddStart
-  | EntryAddSuccess
+  /* | EntryAddSuccess */
   | EntryAddError(string)
   | ChangeDate(Js.Date.t)
   | ChangeName(string)

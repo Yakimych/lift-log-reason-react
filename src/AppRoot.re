@@ -23,9 +23,24 @@ let make = _children => {
         newState,
         self => {
           let successAction = liftLog => self.send(LogFetchSuccess(liftLog));
-          let errorAction = _error =>
+          let errorAction = _ =>
             self.send(LogFetchError("Error fetching log"));
           ApiCaller.fetchLiftLog("benchpress", successAction, errorAction);
+        },
+      )
+    | EntryAddStart =>
+      ReasonReact.UpdateWithSideEffects(
+        newState,
+        self => {
+          let successAction = _ => self.send(LogFetchStart);
+          let errorAction = _ =>
+            self.send(EntryAddError("Failed to add entry"));
+          ApiCaller.addLogEntry(
+            "benchpress",
+            self.state.newEntryState,
+            successAction,
+            errorAction,
+          );
         },
       )
     | _ => ReasonReact.Update(newState)
@@ -98,6 +113,10 @@ let make = _children => {
         </div>
         <AddReps
           dialogState={self.state.dialogState}
+          onSave={_ => {
+            self.send(DialogClose);
+            self.send(EntryAddStart);
+          }}
           closeDialog={_ => self.send(DialogClose)}
           onInputModeChange={mode => self.send(SetInputMode(mode))}
           onAddCustomSet={_ => self.send(AddCustomSet)}

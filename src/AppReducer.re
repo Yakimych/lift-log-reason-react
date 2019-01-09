@@ -49,15 +49,15 @@ let appReducer = (state, action): appState =>
         errorMessage: None,
       },
     }
-  | EntryAddSuccess => {
-      ...state,
-      liftLogState: {
-        ...state.liftLogState,
-        isLoading: false,
-        networkErrorOccured: false,
-        errorMessage: None,
-      },
-    }
+  /* | EntryAddSuccess => {
+       ...state,
+       liftLogState: {
+         ...state.liftLogState,
+         isLoading: false,
+         networkErrorOccured: false,
+         errorMessage: None,
+       },
+     } */
   | EntryAddError(errorMessage) => {
       ...state,
       liftLogState: {
