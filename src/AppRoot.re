@@ -37,84 +37,89 @@ let make = _children => {
     let numberOfEntriesText =
       "Number of entries: "
       ++ string_of_int(self.state.liftLogState.logEntries |> List.length);
-    <div className="add-log-entry">
+    <main className="mt-3 mb-3 p-2 box-shadow App-main">
       <span>
         {ReasonReact.string(
            self.state.liftLogState.isLoading ?
              "Loading..." : numberOfEntriesText,
          )}
       </span>
-      <div className="row">
-        <div className="col">
-          <DatePickerWrapper
-            disabled=false
-            dateFormat="YYYY-MM-DD"
-            selected={self.state.newEntryState.date}
-            onChange={e => self.send(ChangeDate(e))}
-            className="form-control form-control-sm log-entry-input"
-          />
-        </div>
-        <div className="col">
-          <input
-            /* disabled={props.disabled} */
-            className="form-control form-control-sm log-entry-input"
-            type_="text"
-            placeholder="Name"
-            maxLength=50
-            value={self.state.newEntryState.name}
-            onChange={e =>
-              self.send(ChangeName(ReactEvent.Form.target(e)##value))
-            }
-          />
-        </div>
-        <div className="col">
-          <input
-            /* disabled={props.disabled} */
-            className="form-control form-control-sm log-entry-input"
-            type_="text"
-            placeholder="Weight"
-            value={self.state.newEntryState.weightLiftedString}
-            onChange={e =>
-              self.send(
-                ChangeWeightLifted(ReactEvent.Form.target(e)##value),
-              )
-            }
-          />
-        </div>
-        <div className="col d-flex align-items-center">
-          /* <span className="mr-2"> {formatRepsSets(props.setsReps)} </span> */
-          /* disabled={
-               props.disabled || !canAddEntry(props.name, props.weightLifted)
-             } */
-
-            <Button
-              size="sm" color="primary" onClick={_ => self.send(DialogOpen)}>
-              {ReasonReact.string("Add")}
-            </Button>
+      <LiftLogContainer entries={self.state.liftLogState.logEntries} />
+      <div className="add-log-entry">
+        <div className="row">
+          <div className="col">
+            <DatePickerWrapper
+              disabled=false
+              dateFormat="YYYY-MM-DD"
+              selected={self.state.newEntryState.date}
+              onChange={e => self.send(ChangeDate(e))}
+              className="form-control form-control-sm log-entry-input"
+            />
           </div>
+          <div className="col">
+            <input
+              /* disabled={props.disabled} */
+              className="form-control form-control-sm log-entry-input"
+              type_="text"
+              placeholder="Name"
+              maxLength=50
+              value={self.state.newEntryState.name}
+              onChange={e =>
+                self.send(ChangeName(ReactEvent.Form.target(e)##value))
+              }
+            />
+          </div>
+          <div className="col">
+            <input
+              /* disabled={props.disabled} */
+              className="form-control form-control-sm log-entry-input"
+              type_="text"
+              placeholder="Weight"
+              value={self.state.newEntryState.weightLiftedString}
+              onChange={e =>
+                self.send(
+                  ChangeWeightLifted(ReactEvent.Form.target(e)##value),
+                )
+              }
+            />
+          </div>
+          <div className="col d-flex align-items-center">
+            /* <span className="mr-2"> {formatRepsSets(props.setsReps)} </span> */
+            /* disabled={
+                 props.disabled || !canAddEntry(props.name, props.weightLifted)
+               } */
+
+              <Button
+                size="sm"
+                color="primary"
+                onClick={_ => self.send(DialogOpen)}>
+                {ReasonReact.string("Add")}
+              </Button>
+            </div>
+        </div>
+        <AddReps
+          dialogState={self.state.dialogState}
+          closeDialog={_ => self.send(DialogClose)}
+          onInputModeChange={mode => self.send(SetInputMode(mode))}
+          onAddCustomSet={_ => self.send(AddCustomSet)}
+          onRemoveCustomSet={index => self.send(RemoveCustomSet(index))}
+          onCustomSetChange={(index, value) =>
+            self.send(ChangeCustomSet(index, value))
+          }
+          onNumberOfSetsChange={value => self.send(SetNumberOfSets(value))}
+          onNumberOfRepsChange={value => self.send(SetNumberOfReps(value))}
+          openComment={_ => self.send(ShowComment)}
+          changeComment={value => self.send(ChangeComment(value))}
+          addLink={_ => self.send(AddLink)}
+          removeLink={index => self.send(RemoveLink(index))}
+          changeLinkText={(index, newText) =>
+            self.send(ChangeLinkText(index, newText))
+          }
+          changeLinkUrl={(index, newUrl) =>
+            self.send(ChangeLinkUrl(index, newUrl))
+          }
+        />
       </div>
-      <AddReps
-        dialogState={self.state.dialogState}
-        closeDialog={_ => self.send(DialogClose)}
-        onInputModeChange={mode => self.send(SetInputMode(mode))}
-        onAddCustomSet={_ => self.send(AddCustomSet)}
-        onRemoveCustomSet={index => self.send(RemoveCustomSet(index))}
-        onCustomSetChange={(index, value) =>
-          self.send(ChangeCustomSet(index, value))
-        }
-        onNumberOfSetsChange={value => self.send(SetNumberOfSets(value))}
-        onNumberOfRepsChange={value => self.send(SetNumberOfReps(value))}
-        openComment={_ => self.send(ShowComment)}
-        changeComment={value => self.send(ChangeComment(value))}
-        addLink={_ => self.send(AddLink)}
-        removeLink={index => self.send(RemoveLink(index))}
-        changeLinkText={(index, newText) =>
-          self.send(ChangeLinkText(index, newText))
-        }
-        changeLinkUrl={(index, newUrl) =>
-          self.send(ChangeLinkUrl(index, newUrl))
-        }
-      />
-    </div>;
+    </main>;
   },
 };
