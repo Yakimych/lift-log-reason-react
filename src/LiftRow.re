@@ -7,11 +7,11 @@ let make = (~entry: liftLogEntry, _children) => {
   render: _self =>
     <div className="row">
       <span className="col">
-        {entry.date |> Js.Date.toLocaleDateString |> ReasonReact.string}
+        {entry.date |> Utils.toCustomDateFormat |> ReasonReact.string}
       </span>
       <span className="col"> {entry.name |> ReasonReact.string} </span>
       <span className="col">
-        {entry.weightLifted |> string_of_float |> ReasonReact.string}
+        {entry.weightLifted |> Js.Float.toString |> ReasonReact.string}
       </span>
       <span className="col">
         {entry.sets |> Utils.formatSets |> ReasonReact.string}
