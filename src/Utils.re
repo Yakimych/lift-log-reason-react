@@ -22,20 +22,26 @@ let replaceFunc = (newValue, _) => newValue;
 let allRepsAreEqual = (sets: list(set)): bool =>
   sets |> List.for_all(s => s.reps === List.hd(sets).reps);
 
+let formatSetsReps = (sets: list(set)): string =>
+  (sets |> List.length |> string_of_int)
+  ++ "x"
+  ++ (List.hd(sets).reps |> string_of_int);
+
+let formatCustomSets = (sets: list(set)): string =>
+  sets
+  |> List.map(s => s.reps)
+  |> List.fold_left(
+       (acc, value) =>
+         switch (acc) {
+         | "" => string_of_int(value)
+         | formatttedSets => formatttedSets ++ "-" ++ string_of_int(value)
+         },
+       "",
+     );
+
 let formatSets = (sets: list(set)): string =>
-  if (allRepsAreEqual(sets)) {
-    (sets |> List.length |> string_of_int)
-    ++ "x"
-    ++ (List.hd(sets).reps |> string_of_int);
-  } else {
-    sets
-    |> List.map(s => s.reps)
-    |> List.fold_left(
-         (acc, value) =>
-           switch (acc) {
-           | "" => string_of_int(value)
-           | other => other ++ "-" ++ string_of_int(value)
-           },
-         "",
-       );
+  switch (sets) {
+  | [] => ""
+  | list =>
+    list |> (list |> allRepsAreEqual ? formatSetsReps : formatCustomSets)
   };
