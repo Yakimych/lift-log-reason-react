@@ -14,6 +14,7 @@ let make = (~entries: list(liftLogEntry), _children) => {
       </div>
       <div className="lifts">
         {entries
+         |> List.rev
          |> List.mapi((index, logEntry) =>
               <LiftRow entry=logEntry key={string_of_int(index)} />
             )
