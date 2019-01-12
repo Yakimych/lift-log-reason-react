@@ -45,3 +45,15 @@ let formatSets = (sets: list(set)): string =>
   | list =>
     list |> (list |> allRepsAreEqual ? formatSetsReps : formatCustomSets)
   };
+
+let numberToDateString = (number: int) =>
+  (number < 10 ? "0" : "") ++ string_of_int(number);
+
+let toCustomDateFormat = (date: Js.Date.t): string => {
+  let year = date |> Js.Date.getFullYear |> truncate |> string_of_int;
+  let month =
+    date |> Js.Date.getMonth |> truncate |> (+)(1) |> numberToDateString;
+  let day = date |> Js.Date.getDate |> truncate |> numberToDateString;
+
+  year ++ "-" ++ month ++ "-" ++ day;
+};
