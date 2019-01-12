@@ -25,7 +25,7 @@ let make = _children => {
           let successAction = liftLog => self.send(LogFetchSuccess(liftLog));
           let errorAction = _error =>
             self.send(LogFetchError("Error fetching log"));
-          ApiCaller.fetchLiftLog("testLog", successAction, errorAction);
+          ApiCaller.fetchLiftLog("benchpress", successAction, errorAction);
         },
       )
     | _ => ReasonReact.Update(newState)
@@ -44,7 +44,6 @@ let make = _children => {
              "Loading..." : numberOfEntriesText,
          )}
       </span>
-      <LiftLogContainer entries={self.state.liftLogState.logEntries} />
       <div className="add-log-entry">
         <div className="row">
           <div className="col">
@@ -119,6 +118,7 @@ let make = _children => {
             self.send(ChangeLinkUrl(index, newUrl))
           }
         />
+        <LiftLogContainer entries={self.state.liftLogState.logEntries} />
       </div>
     </main>;
   },
