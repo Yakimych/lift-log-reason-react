@@ -1,14 +1,26 @@
 open AppActions;
 open AppState;
+open Belt;
 
 let replaceLinkTextFunc = (newValue, oldValue) => {
   ...oldValue,
   text: newValue.text,
 };
+
 let replaceLinkUrlFunc = (newValue, oldValue) => {
   ...oldValue,
   url: newValue.url,
 };
+
+let toMaybeFloat = (floatString: string): option(float) =>
+  try (Some(floatString |> float_of_string)) {
+  | _ => None
+  };
+
+let toMaybeInt = (intString: string): option(int) =>
+  try (Some(intString |> int_of_string)) {
+  | _ => None
+  };
 
 let appReducer = (state, action): appState =>
   switch (action) {
@@ -86,8 +98,10 @@ let appReducer = (state, action): appState =>
       newEntryState: {
         ...state.newEntryState,
         weightLiftedString: newWeightLiftedString,
+        weightLifted:
+          state.newEntryState.weightLifted
+          |> Option.getWithDefault(newWeightLiftedString |> toMaybeFloat),
       },
-      /* TODO: Parse string to float */
     }
   | DialogReset => {
       ...state,
@@ -115,21 +129,25 @@ let appReducer = (state, action): appState =>
       },
       /* TODO: Check if it's the first switch */
     }
-  | SetNumberOfSets(numberOfSets) => {
+  | SetNumberOfSets(numberOfSetsString) => {
       ...state,
       dialogState: {
         ...state.dialogState,
-        numberOfSetsString: numberOfSets,
+        numberOfSetsString,
+        numberOfSets:
+          state.dialogState.numberOfSets
+          |> Option.getWithDefault(numberOfSetsString |> toMaybeInt),
       },
-      /* Parse to float */
     }
-  | SetNumberOfReps(numberOfReps) => {
+  | SetNumberOfReps(numberOfRepsString) => {
       ...state,
       dialogState: {
         ...state.dialogState,
-        numberOfRepsString: numberOfReps,
+        numberOfRepsString,
+        numberOfReps:
+          state.dialogState.numberOfReps
+          |> Option.getWithDefault(numberOfRepsString |> toMaybeInt),
       },
-      /* Parse to float */
     }
 
   | AddCustomSet => {

@@ -8,13 +8,6 @@ open BsReactstrap;
 [%bs.raw {|require('./AppRoot.css')|}];
 [%bs.raw {|require('react-datepicker/dist/react-datepicker.css')|}];
 
-/* TODO: Option.map? Option.withDefault? */
-let mapWeightLifted = (maybeWeight: option(float)) =>
-  switch (maybeWeight) {
-  | Some(weight) => weight
-  | None => 0.0
-  };
-
 let component = ReasonReact.reducerComponent("AppRoot");
 
 let make = _children => {
@@ -32,7 +25,7 @@ let make = _children => {
           let successAction = liftLog => self.send(LogFetchSuccess(liftLog));
           let errorAction = _ =>
             self.send(LogFetchError("Error fetching log"));
-          ApiCaller.fetchLiftLog("benchpress", successAction, errorAction);
+          ApiCaller.fetchLiftLog("testlog", successAction, errorAction);
         },
       )
     | EntryAddStart =>
@@ -42,7 +35,7 @@ let make = _children => {
           let {newEntryState, dialogState} = self.state;
           let entry: liftLogEntry = {
             name: newEntryState.name,
-            weightLifted: newEntryState.weightLifted |> mapWeightLifted,
+            weightLifted: newEntryState.weightLifted,
             date: newEntryState.date,
             sets: dialogState.customSets,
           };

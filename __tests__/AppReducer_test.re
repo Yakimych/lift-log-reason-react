@@ -27,6 +27,71 @@ describe("AppReducer", () => {
     });
   });
 
+  describe("weightLifted", () => {
+    test("should be parsed correctly for a valid float", () => {
+      let finalState = [ChangeWeightLifted("1")] |> runActions;
+
+      expect(finalState.newEntryState.weightLifted) |> toBe(1.0);
+    });
+
+    test("should be parsed correctly for a temporary float", () => {
+      let finalState =
+        [ChangeWeightLifted("1"), ChangeWeightLifted("1.")] |> runActions;
+
+      expect(finalState.newEntryState.weightLifted) |> toBe(1.0);
+    });
+
+    test(
+      "should be parsed correctly for a valid float with decimal separator", () => {
+      let finalState =
+        [
+          ChangeWeightLifted("1"),
+          ChangeWeightLifted("1."),
+          ChangeWeightLifted("1.2"),
+        ]
+        |> runActions;
+
+      expect(finalState.newEntryState.weightLifted) |> toBe(1.2);
+    });
+
+    test("should be unchanged when input is an invalid float", () => {
+      let finalState =
+        [DialogOpen, SetNumberOfSets("1"), SetNumberOfSets("1a")]
+        |> runActions;
+
+      expect(finalState.dialogState.numberOfSets) |> toBe(1);
+    });
+  });
+
+  describe("number of sets", () => {
+    test("should be parsed correctly for a valid int", () => {
+      let finalState = [DialogOpen, SetNumberOfSets("1")] |> runActions;
+
+      expect(finalState.dialogState.numberOfSets) |> toBe(1);
+    });
+
+    test("should be changed correctly when input is a valid int", () => {
+      let finalState =
+        [DialogOpen, SetNumberOfSets("1"), SetNumberOfSets("12")]
+        |> runActions;
+
+      expect(finalState.dialogState.numberOfSets) |> toBe(12);
+    });
+
+    test("should not be changed when input is an invalid int", () => {
+      let finalState =
+        [
+          DialogOpen,
+          SetNumberOfSets("1"),
+          SetNumberOfSets("12"),
+          SetNumberOfSets("12a"),
+        ]
+        |> runActions;
+
+      expect(finalState.dialogState.numberOfSets) |> toBe(12);
+    });
+  });
+
   describe("links", () => {
     test("should be added", () => {
       let finalState = [DialogOpen, AddLink, AddLink, AddLink] |> runActions;

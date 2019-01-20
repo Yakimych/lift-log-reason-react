@@ -31,7 +31,7 @@ let getInitialNewEntryState = () => {
   name: "",
   date: Js.Date.make(),
   weightLiftedString: "",
-  weightLifted: None,
+  weightLifted: 0.0,
 };
 
 let getInitialState = () => {
