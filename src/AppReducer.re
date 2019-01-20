@@ -1,6 +1,6 @@
 open AppActions;
 open AppState;
-open Belt;
+open Utils;
 
 let replaceLinkTextFunc = (newValue, oldValue) => {
   ...oldValue,
@@ -11,16 +11,6 @@ let replaceLinkUrlFunc = (newValue, oldValue) => {
   ...oldValue,
   url: newValue.url,
 };
-
-let toMaybeFloat = (floatString: string): option(float) =>
-  try (Some(floatString |> float_of_string)) {
-  | _ => None
-  };
-
-let toMaybeInt = (intString: string): option(int) =>
-  try (Some(intString |> int_of_string)) {
-  | _ => None
-  };
 
 let appReducer = (state, action): appState =>
   switch (action) {
@@ -100,7 +90,7 @@ let appReducer = (state, action): appState =>
         weightLiftedString: newWeightLiftedString,
         weightLifted:
           state.newEntryState.weightLifted
-          |> Option.getWithDefault(newWeightLiftedString |> toMaybeFloat),
+          |> Belt.Option.getWithDefault(newWeightLiftedString |> toMaybeFloat),
       },
     }
   | DialogReset => {
@@ -136,7 +126,7 @@ let appReducer = (state, action): appState =>
         numberOfSetsString,
         numberOfSets:
           state.dialogState.numberOfSets
-          |> Option.getWithDefault(numberOfSetsString |> toMaybeInt),
+          |> Belt.Option.getWithDefault(numberOfSetsString |> toMaybeInt),
       },
     }
   | SetNumberOfReps(numberOfRepsString) => {
@@ -146,7 +136,7 @@ let appReducer = (state, action): appState =>
         numberOfRepsString,
         numberOfReps:
           state.dialogState.numberOfReps
-          |> Option.getWithDefault(numberOfRepsString |> toMaybeInt),
+          |> Belt.Option.getWithDefault(numberOfRepsString |> toMaybeInt),
       },
     }
 
@@ -170,7 +160,12 @@ let appReducer = (state, action): appState =>
           state.dialogState.customSetsStrings |> Utils.removeAtIndex(index),
       },
     }
-  | ChangeCustomSet(index, newSetString) => {
+  | ChangeCustomSet(index, newSetString) =>
+    /* let newSetValue =
+         0 |> Belt.Option.getWithDefault(newSetString |> toMaybeInt);
+       let newSet = index |> List.nth(state.dialogState.customSets); */
+
+    {
       ...state,
       dialogState: {
         ...state.dialogState,
