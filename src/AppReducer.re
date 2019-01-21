@@ -154,16 +154,16 @@ let appReducer = (state, action): appState =>
       ...state,
       dialogState: {
         ...state.dialogState,
-        customSets:
-          state.dialogState.customSets |> Utils.removeAtIndex(index),
+        customSets: state.dialogState.customSets |> removeAtIndex(index),
         customSetsStrings:
           state.dialogState.customSetsStrings |> Utils.removeAtIndex(index),
       },
     }
   | ChangeCustomSet(index, newSetString) =>
-    /* let newSetValue =
-         0 |> Belt.Option.getWithDefault(newSetString |> toMaybeInt);
-       let newSet = index |> List.nth(state.dialogState.customSets); */
+    let newSet =
+      index
+      |> List.nth(state.dialogState.customSets)
+      |> Belt.Option.getWithDefault(newSetString |> toValidSet);
 
     {
       ...state,
@@ -171,10 +171,12 @@ let appReducer = (state, action): appState =>
         ...state.dialogState,
         customSetsStrings:
           state.dialogState.customSetsStrings
-          |> Utils.changeAtIndex(index, Utils.replaceFunc, newSetString),
+          |> changeAtIndex(index, replaceFunc, newSetString),
+        customSets:
+          state.dialogState.customSets
+          |> changeAtIndex(index, replaceFunc, newSet),
       },
-      /* TODO: customSets */
-    }
+    };
   | ShowComment => {
       ...state,
       dialogState: {
@@ -202,7 +204,7 @@ let appReducer = (state, action): appState =>
       ...state,
       dialogState: {
         ...state.dialogState,
-        links: state.dialogState.links |> Utils.removeAtIndex(index),
+        links: state.dialogState.links |> removeAtIndex(index),
       },
     }
   | ChangeLinkText(index, newText) => {
@@ -211,7 +213,7 @@ let appReducer = (state, action): appState =>
         ...state.dialogState,
         links:
           state.dialogState.links
-          |> Utils.changeAtIndex(
+          |> changeAtIndex(
                index,
                replaceLinkTextFunc,
                {text: newText, url: ""},
@@ -224,7 +226,7 @@ let appReducer = (state, action): appState =>
         ...state.dialogState,
         links:
           state.dialogState.links
-          |> Utils.changeAtIndex(
+          |> changeAtIndex(
                index,
                replaceLinkUrlFunc,
                {text: "", url: newUrl},
