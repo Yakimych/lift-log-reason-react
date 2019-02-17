@@ -119,6 +119,31 @@ describe("AppReducer", () => {
       expect(finalState.dialogState.links |> List.length) |> toBe(3);
     });
 
+    test("should not be possible to add more than 3 links", () => {
+      let finalState =
+        [DialogOpen, AddLink, AddLink, AddLink, AddLink] |> runActions;
+      expect(finalState.dialogState.links |> List.length) |> toBe(3);
+    });
+
+    test("should not be possible to remove link if none exist", () => {
+      let finalState = [DialogOpen, RemoveLink(0)] |> runActions;
+      expect(finalState.dialogState.links |> List.length) |> toBe(0);
+    });
+
+    test("should not be possible to remove more links than added", () => {
+      let finalState =
+        [
+          DialogOpen,
+          AddLink,
+          AddLink,
+          RemoveLink(1),
+          RemoveLink(0),
+          RemoveLink(0),
+        ]
+        |> runActions;
+      expect(finalState.dialogState.links |> List.length) |> toBe(0);
+    });
+
     test("should change text and url", () => {
       let linkText = "testLink1";
       let linkUrl = "testUrl1";

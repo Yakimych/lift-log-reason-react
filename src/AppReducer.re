@@ -12,6 +12,20 @@ let replaceLinkUrlFunc = (newValue, oldValue) => {
   url: newValue.url,
 };
 
+let canAddLink = dialogState => {
+  dialogState.links |> List.length < 3;
+};
+
+let tryAddLink = dialogState =>
+  if (canAddLink(dialogState)) {
+    {
+      ...dialogState,
+      links: dialogState.links @ [{text: "text", url: "url"}],
+    };
+  } else {
+    dialogState;
+  };
+
 let appReducer = (state, action): appState =>
   switch (action) {
   | LogFetchStart => {
@@ -191,15 +205,7 @@ let appReducer = (state, action): appState =>
         comment: newComment,
       },
     }
-  | AddLink =>
-    /* TODO: Check if link can be added first */
-    {
-      ...state,
-      dialogState: {
-        ...state.dialogState,
-        links: state.dialogState.links @ [{text: "text", url: "url"}],
-      },
-    }
+  | AddLink => {...state, dialogState: tryAddLink(state.dialogState)}
   | RemoveLink(index) => {
       ...state,
       dialogState: {
