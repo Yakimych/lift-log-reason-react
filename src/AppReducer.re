@@ -12,8 +12,10 @@ let replaceLinkUrlFunc = (newValue, oldValue) => {
   url: newValue.url,
 };
 
+let maxNumberOfLinks = 3;
+
 let canAddLink = dialogState => {
-  dialogState.links |> List.length < 3;
+  dialogState.links |> List.length < maxNumberOfLinks;
 };
 
 let tryAddLink = dialogState =>
