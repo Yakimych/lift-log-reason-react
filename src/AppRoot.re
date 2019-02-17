@@ -67,7 +67,7 @@ let make = _children => {
           <div className="col">
             <DatePickerWrapper
               disabled=false
-              dateFormat="YYYY-MM-DD"
+              dateFormat="YYYY-MM-dd"
               selected={self.state.newEntryState.date}
               onChange={e => self.send(ChangeDate(e))}
               className="form-control form-control-sm log-entry-input"

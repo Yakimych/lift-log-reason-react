@@ -13,10 +13,31 @@ let replaceLinkUrlFunc = (newValue, oldValue) => {
 };
 
 let maxNumberOfLinks = 3;
+let maxNumberOfCustomSets = 30;
 
 let canAddLink = dialogState => {
   dialogState.links |> List.length < maxNumberOfLinks;
 };
+
+let canAddCustomSet = dialogState => {
+  dialogState.customSets |> List.length < maxNumberOfCustomSets;
+};
+
+let canRemoveCustomSet = dialogState => {
+  dialogState.customSets |> List.length > 1;
+};
+
+let tryRemoveCustomSet = (index, dialogState) =>
+  if (canRemoveCustomSet(dialogState)) {
+    {
+      ...dialogState,
+      customSets: dialogState.customSets |> removeAtIndex(index),
+      customSetsStrings:
+        dialogState.customSetsStrings |> Utils.removeAtIndex(index),
+    };
+  } else {
+    dialogState;
+  };
 
 let tryAddLink = dialogState =>
   if (canAddLink(dialogState)) {
@@ -27,6 +48,19 @@ let tryAddLink = dialogState =>
   } else {
     dialogState;
   };
+
+let getCustomSetsFromSetsReps = dialogState => {
+  let customSetsString =
+    Array.make(dialogState.numberOfSets, dialogState.numberOfRepsString)
+    |> Array.to_list;
+  let customSets =
+    Array.make(
+      dialogState.numberOfSets,
+      {reps: dialogState.numberOfReps, rpe: None},
+    )
+    |> Array.to_list;
+  (customSets, customSetsString);
+};
 
 let appReducer = (state, action): appState =>
   switch (action) {
@@ -127,14 +161,31 @@ let appReducer = (state, action): appState =>
         isOpen: false,
       },
     }
-  | SetInputMode(inputMode) => {
-      ...state,
-      dialogState: {
-        ...state.dialogState,
-        inputMode,
-      },
-      /* TODO: Check if it's the first switch */
-    }
+  | SetInputMode(inputMode) =>
+    /* TODO: Refactor */
+    let switchingToCustom = inputMode == CustomReps;
+    let isFirstSwitch = state.dialogState.customSets |> List.length == 0;
+    if (switchingToCustom && isFirstSwitch) {
+      let (customSets, customSetsStrings) =
+        getCustomSetsFromSetsReps(state.dialogState);
+      {
+        ...state,
+        dialogState: {
+          ...state.dialogState,
+          customSets,
+          customSetsStrings,
+          inputMode,
+        },
+      };
+    } else {
+      {
+        ...state,
+        dialogState: {
+          ...state.dialogState,
+          inputMode,
+        },
+      };
+    };
   | SetNumberOfSets(numberOfSetsString) => {
       ...state,
       dialogState: {
@@ -156,24 +207,26 @@ let appReducer = (state, action): appState =>
       },
     }
 
-  | AddCustomSet => {
-      ...state,
-      dialogState: {
-        ...state.dialogState,
-        customSets: state.dialogState.customSets @ [{reps: 5, rpe: None}],
-        customSetsStrings: state.dialogState.customSetsStrings @ ["5"],
-      },
-      /* TODO: Fetch the value of the last set */
-      /* TODO: Check if another set can be added first */
+  | AddCustomSet =>
+    if (!canAddCustomSet(state.dialogState)) {
+      state;
+    } else {
+      let lastSet = state.dialogState.customSets |> List.rev |> List.hd;
+      let lastSetString =
+        state.dialogState.customSetsStrings |> List.rev |> List.hd;
+      {
+        ...state,
+        dialogState: {
+          ...state.dialogState,
+          customSets: state.dialogState.customSets @ [lastSet],
+          customSetsStrings:
+            state.dialogState.customSetsStrings @ [lastSetString],
+        },
+      };
     }
   | RemoveCustomSet(index) => {
       ...state,
-      dialogState: {
-        ...state.dialogState,
-        customSets: state.dialogState.customSets |> removeAtIndex(index),
-        customSetsStrings:
-          state.dialogState.customSetsStrings |> Utils.removeAtIndex(index),
-      },
+      dialogState: tryRemoveCustomSet(index, state.dialogState),
     }
   | ChangeCustomSet(index, newSetString) =>
     let newSet =
