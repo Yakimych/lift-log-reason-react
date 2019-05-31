@@ -54,7 +54,7 @@ type dialogState = {
   commentIsShown: bool,
   comment: string,
   canAddLink: bool,
-  links: list(liftInfoLink) /* TODO: Change to array? */
+  links: list(liftInfoLink),
 };
 
 type appState = {

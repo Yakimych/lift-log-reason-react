@@ -18,17 +18,17 @@ let make = _children => {
     let newState = AppReducer.appReducer(state, action);
 
     switch (action) {
-    | LogFetchStart =>
+    | FetchLogEntries =>
       ReasonReact.UpdateWithSideEffects(
         newState,
         self => {
           let successAction = liftLog => self.send(LogFetchSuccess(liftLog));
           let errorAction = _ =>
-            self.send(LogFetchError("Error fetching log"));
+            self.send(ApiCallError("Error fetching log"));
           ApiCaller.fetchLiftLog("testlog", successAction, errorAction);
         },
       )
-    | EntryAddStart =>
+    | AddLogEntry =>
       ReasonReact.UpdateWithSideEffects(
         newState,
         self => {
@@ -42,9 +42,9 @@ let make = _children => {
             links: dialogState.links,
           };
 
-          let successAction = _ => self.send(LogFetchStart);
+          let successAction = _ => self.send(FetchLogEntries);
           let errorAction = _ =>
-            self.send(EntryAddError("Failed to add entry"));
+            self.send(ApiCallError("Failed to add entry"));
           ApiCaller.addLogEntry("testlog", entry, successAction, errorAction);
         },
       )
@@ -52,7 +52,7 @@ let make = _children => {
     };
   },
 
-  didMount: self => self.send(LogFetchStart),
+  didMount: self => self.send(FetchLogEntries),
   render: self => {
     let numberOfEntriesText =
       "Number of entries: "
@@ -120,7 +120,7 @@ let make = _children => {
           dialogState={self.state.dialogState}
           onSave={_ => {
             self.send(DialogClose);
-            self.send(EntryAddStart);
+            self.send(AddLogEntry);
           }}
           closeDialog={_ => self.send(DialogClose)}
           onInputModeChange={mode => self.send(SetInputMode(mode))}

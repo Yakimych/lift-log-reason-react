@@ -64,12 +64,14 @@ let getCustomSetsFromSetsReps = dialogState => {
 
 let appReducer = (state, action): appState =>
   switch (action) {
-  | LogFetchStart => {
+  | FetchLogEntries
+  | AddLogEntry => {
       ...state,
       liftLogState: {
         ...state.liftLogState,
         isLoading: true,
         networkErrorOccured: false,
+        errorMessage: None,
       },
     }
   | LogFetchSuccess(liftLog) => {
@@ -82,35 +84,7 @@ let appReducer = (state, action): appState =>
         errorMessage: None,
       },
     }
-  | LogFetchError(errorMessage) => {
-      ...state,
-      liftLogState: {
-        ...state.liftLogState,
-        isLoading: false,
-        networkErrorOccured: true,
-        errorMessage: Some(errorMessage),
-      },
-    }
-  /* TODO: Consolidate with Loading LiftLog? ApiRequestStart/Success/Error? */
-  | EntryAddStart => {
-      ...state,
-      liftLogState: {
-        ...state.liftLogState,
-        isLoading: true,
-        networkErrorOccured: false,
-        errorMessage: None,
-      },
-    }
-  /* | EntryAddSuccess => {
-       ...state,
-       liftLogState: {
-         ...state.liftLogState,
-         isLoading: false,
-         networkErrorOccured: false,
-         errorMessage: None,
-       },
-     } */
-  | EntryAddError(errorMessage) => {
+  | ApiCallError(errorMessage) => {
       ...state,
       liftLogState: {
         ...state.liftLogState,
@@ -206,7 +180,6 @@ let appReducer = (state, action): appState =>
           |> Belt.Option.getWithDefault(numberOfRepsString |> toMaybeInt),
       },
     }
-
   | AddCustomSet =>
     if (!canAddCustomSet(state.dialogState)) {
       state;
