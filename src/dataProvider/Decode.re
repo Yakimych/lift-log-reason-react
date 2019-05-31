@@ -8,6 +8,11 @@ let set = json => {
   };
 };
 
+let link = json => {
+  open! Json.Decode;
+  {text: json |> field("text", string), url: json |> field("url", string)};
+};
+
 let logEntry = json => {
   open! Json.Decode;
   {
@@ -15,6 +20,12 @@ let logEntry = json => {
     weightLifted: json |> field("weightLifted", float),
     date: json |> field("date", date),
     sets: json |> field("sets", list(set)),
+    comment:
+      (json |> optional(field("comment", string)))
+      ->Belt.Option.getWithDefault(""),
+    links:
+      (json |> optional(field("links", list(link))))
+      ->Belt.Option.getWithDefault([]),
   };
 };
 

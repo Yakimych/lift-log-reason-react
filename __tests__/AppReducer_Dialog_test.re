@@ -2,11 +2,12 @@ open Jest;
 open Expect;
 open AppReducer;
 open AppActions;
+open AppState;
 
 let runActions = actions =>
   actions |> List.fold_left(appReducer, InitialState.getInitialState());
 
-describe("AppReducer", () => {
+describe("AppReducer", () =>
   describe("dialog", () => {
     test("should be closed from the start", () => {
       let initialState = InitialState.getInitialState();
@@ -25,31 +26,5 @@ describe("AppReducer", () => {
 
       expect(finalState.dialogState.isOpen) |> toBe(false);
     });
-  });
-
-  describe("links", () => {
-    test("should be added", () => {
-      let finalState = [DialogOpen, AddLink, AddLink, AddLink] |> runActions;
-      expect(finalState.dialogState.links |> List.length) |> toBe(3);
-    });
-
-    test("should change text and url", () => {
-      let linkText = "testLink1";
-      let linkUrl = "testUrl1";
-      let finalState =
-        [
-          DialogOpen,
-          AddLink,
-          AddLink,
-          AddLink,
-          ChangeLinkUrl(0, linkUrl),
-          ChangeLinkText(0, linkText),
-        ]
-        |> runActions;
-
-      let changedLink = finalState.dialogState.links |> List.hd;
-      expect((changedLink.text, changedLink.url))
-      |> toEqual((linkText, linkUrl));
-    });
-  });
-});
+  })
+);

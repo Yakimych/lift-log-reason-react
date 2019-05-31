@@ -8,6 +8,7 @@ let component = ReasonReact.statelessComponent("AddReps");
 let make =
     (
       ~dialogState: dialogState,
+      ~onSave,
       ~closeDialog,
       ~onInputModeChange,
       ~onAddCustomSet,
@@ -73,7 +74,9 @@ let make =
         </div>
       </ModalBody>
       <ModalFooter>
-        <Button color="primary"> {ReasonReact.string("Save")} </Button>
+        <Button color="primary" onClick=onSave>
+          {ReasonReact.string("Save")}
+        </Button>
         <Button color="secondary" onClick=closeDialog>
           {ReasonReact.string("Cancel")}
         </Button>

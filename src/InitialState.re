@@ -7,12 +7,8 @@ let getInitialDialogState = () => {
   numberOfReps: 5,
   numberOfSetsString: "3",
   numberOfSets: 3,
-  customSets: [
-    {reps: 5, rpe: None},
-    {reps: 5, rpe: None},
-    {reps: 5, rpe: None},
-  ],
-  customSetsStrings: ["5", "5", "5"],
+  customSets: [],
+  customSetsStrings: [],
   commentIsShown: false,
   comment: "",
   canAddLink: true,
@@ -31,7 +27,7 @@ let getInitialNewEntryState = () => {
   name: "",
   date: Js.Date.make(),
   weightLiftedString: "",
-  weightLifted: None,
+  weightLifted: 0.0,
 };
 
 let getInitialState = () => {

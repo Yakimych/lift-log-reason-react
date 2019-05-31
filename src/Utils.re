@@ -57,3 +57,39 @@ let toCustomDateFormat = (date: Js.Date.t): string => {
 
   year ++ "-" ++ month ++ "-" ++ day;
 };
+
+let toMaybeFloat = (floatString: string): option(float) =>
+  try (Some(floatString |> float_of_string)) {
+  | _ => None
+  };
+
+let toMaybeInt = (intString: string): option(int) =>
+  try (Some(intString |> int_of_string)) {
+  | _ => None
+  };
+
+let validRpeValues = [6.5, 7.0, 7.5, 8.0, 8.5, 9.0, 9.5, 10.0];
+let isValidRpe = (value: float): bool =>
+  validRpeValues |> List.exists(r => r == value);
+
+let toValidRpe = (rpeString: string): option(float) => {
+  let maybeRpeFloat = rpeString |> toMaybeFloat;
+  let maybeValid = Belt.Option.map(maybeRpeFloat, isValidRpe);
+  switch (maybeValid) {
+  | Some(true) => maybeRpeFloat
+  | _ => None
+  };
+};
+
+let toValidSet = (setString: string): option(set) => {
+  let stringParts = Js.String.split("@", setString);
+
+  switch (stringParts) {
+  | [|repsString|] =>
+    Belt.Option.map(repsString |> toMaybeInt, r => {reps: r, rpe: None})
+  | [|repsString, rpeString|] =>
+    let maybeRpe = rpeString |> toValidRpe;
+    Belt.Option.map(repsString |> toMaybeInt, r => {reps: r, rpe: maybeRpe});
+  | _ => None
+  };
+};

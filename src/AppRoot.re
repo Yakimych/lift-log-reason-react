@@ -18,21 +18,41 @@ let make = _children => {
     let newState = AppReducer.appReducer(state, action);
 
     switch (action) {
-    | LogFetchStart =>
+    | FetchLogEntries =>
       ReasonReact.UpdateWithSideEffects(
         newState,
         self => {
           let successAction = liftLog => self.send(LogFetchSuccess(liftLog));
-          let errorAction = _error =>
-            self.send(LogFetchError("Error fetching log"));
-          ApiCaller.fetchLiftLog("benchpress", successAction, errorAction);
+          let errorAction = _ =>
+            self.send(ApiCallError("Error fetching log"));
+          ApiCaller.fetchLiftLog("testlog", successAction, errorAction);
+        },
+      )
+    | AddLogEntry =>
+      ReasonReact.UpdateWithSideEffects(
+        newState,
+        self => {
+          let {newEntryState, dialogState} = self.state;
+          let entry: liftLogEntry = {
+            name: newEntryState.name,
+            weightLifted: newEntryState.weightLifted,
+            date: newEntryState.date,
+            sets: dialogState.customSets,
+            comment: dialogState.comment,
+            links: dialogState.links,
+          };
+
+          let successAction = _ => self.send(FetchLogEntries);
+          let errorAction = _ =>
+            self.send(ApiCallError("Failed to add entry"));
+          ApiCaller.addLogEntry("testlog", entry, successAction, errorAction);
         },
       )
     | _ => ReasonReact.Update(newState)
     };
   },
 
-  didMount: self => self.send(LogFetchStart),
+  didMount: self => self.send(FetchLogEntries),
   render: self => {
     let numberOfEntriesText =
       "Number of entries: "
@@ -49,7 +69,7 @@ let make = _children => {
           <div className="col">
             <DatePickerWrapper
               disabled=false
-              dateFormat="YYYY-MM-DD"
+              dateFormat="YYYY-MM-dd"
               selected={self.state.newEntryState.date}
               onChange={e => self.send(ChangeDate(e))}
               className="form-control form-control-sm log-entry-input"
@@ -98,6 +118,10 @@ let make = _children => {
         </div>
         <AddReps
           dialogState={self.state.dialogState}
+          onSave={_ => {
+            self.send(DialogClose);
+            self.send(AddLogEntry);
+          }}
           closeDialog={_ => self.send(DialogClose)}
           onInputModeChange={mode => self.send(SetInputMode(mode))}
           onAddCustomSet={_ => self.send(AddCustomSet)}

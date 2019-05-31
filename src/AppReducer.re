@@ -1,23 +1,77 @@
 open AppActions;
 open AppState;
+open Utils;
 
 let replaceLinkTextFunc = (newValue, oldValue) => {
   ...oldValue,
   text: newValue.text,
 };
+
 let replaceLinkUrlFunc = (newValue, oldValue) => {
   ...oldValue,
   url: newValue.url,
 };
 
+let maxNumberOfLinks = 3;
+let maxNumberOfCustomSets = 30;
+
+let canAddLink = dialogState => {
+  dialogState.links |> List.length < maxNumberOfLinks;
+};
+
+let canAddCustomSet = dialogState => {
+  dialogState.customSets |> List.length < maxNumberOfCustomSets;
+};
+
+let canRemoveCustomSet = dialogState => {
+  dialogState.customSets |> List.length > 1;
+};
+
+let tryRemoveCustomSet = (index, dialogState) =>
+  if (canRemoveCustomSet(dialogState)) {
+    {
+      ...dialogState,
+      customSets: dialogState.customSets |> removeAtIndex(index),
+      customSetsStrings:
+        dialogState.customSetsStrings |> Utils.removeAtIndex(index),
+    };
+  } else {
+    dialogState;
+  };
+
+let tryAddLink = dialogState =>
+  if (canAddLink(dialogState)) {
+    {
+      ...dialogState,
+      links: dialogState.links @ [{text: "text", url: "url"}],
+    };
+  } else {
+    dialogState;
+  };
+
+let getCustomSetsFromSetsReps = dialogState => {
+  let customSetsString =
+    Array.make(dialogState.numberOfSets, dialogState.numberOfRepsString)
+    |> Array.to_list;
+  let customSets =
+    Array.make(
+      dialogState.numberOfSets,
+      {reps: dialogState.numberOfReps, rpe: None},
+    )
+    |> Array.to_list;
+  (customSets, customSetsString);
+};
+
 let appReducer = (state, action): appState =>
   switch (action) {
-  | LogFetchStart => {
+  | FetchLogEntries
+  | AddLogEntry => {
       ...state,
       liftLogState: {
         ...state.liftLogState,
         isLoading: true,
         networkErrorOccured: false,
+        errorMessage: None,
       },
     }
   | LogFetchSuccess(liftLog) => {
@@ -30,7 +84,7 @@ let appReducer = (state, action): appState =>
         errorMessage: None,
       },
     }
-  | LogFetchError(errorMessage) => {
+  | ApiCallError(errorMessage) => {
       ...state,
       liftLogState: {
         ...state.liftLogState,
@@ -58,8 +112,10 @@ let appReducer = (state, action): appState =>
       newEntryState: {
         ...state.newEntryState,
         weightLiftedString: newWeightLiftedString,
+        weightLifted:
+          state.newEntryState.weightLifted
+          |> Belt.Option.getWithDefault(newWeightLiftedString |> toMaybeFloat),
       },
-      /* TODO: Parse string to float */
     }
   | DialogReset => {
       ...state,
@@ -79,61 +135,90 @@ let appReducer = (state, action): appState =>
         isOpen: false,
       },
     }
-  | SetInputMode(inputMode) => {
+  | SetInputMode(inputMode) =>
+    /* TODO: Refactor */
+    let switchingToCustom = inputMode == CustomReps;
+    let isFirstSwitch = state.dialogState.customSets |> List.length == 0;
+    if (switchingToCustom && isFirstSwitch) {
+      let (customSets, customSetsStrings) =
+        getCustomSetsFromSetsReps(state.dialogState);
+      {
+        ...state,
+        dialogState: {
+          ...state.dialogState,
+          customSets,
+          customSetsStrings,
+          inputMode,
+        },
+      };
+    } else {
+      {
+        ...state,
+        dialogState: {
+          ...state.dialogState,
+          inputMode,
+        },
+      };
+    };
+  | SetNumberOfSets(numberOfSetsString) => {
       ...state,
       dialogState: {
         ...state.dialogState,
-        inputMode,
+        numberOfSetsString,
+        numberOfSets:
+          state.dialogState.numberOfSets
+          |> Belt.Option.getWithDefault(numberOfSetsString |> toMaybeInt),
       },
-      /* TODO: Check if it's the first switch */
     }
-  | SetNumberOfSets(numberOfSets) => {
+  | SetNumberOfReps(numberOfRepsString) => {
       ...state,
       dialogState: {
         ...state.dialogState,
-        numberOfSetsString: numberOfSets,
+        numberOfRepsString,
+        numberOfReps:
+          state.dialogState.numberOfReps
+          |> Belt.Option.getWithDefault(numberOfRepsString |> toMaybeInt),
       },
-      /* Parse to float */
     }
-  | SetNumberOfReps(numberOfReps) => {
-      ...state,
-      dialogState: {
-        ...state.dialogState,
-        numberOfRepsString: numberOfReps,
-      },
-      /* Parse to float */
-    }
-
-  | AddCustomSet => {
-      ...state,
-      dialogState: {
-        ...state.dialogState,
-        customSets: state.dialogState.customSets @ [{reps: 5, rpe: None}],
-        customSetsStrings: state.dialogState.customSetsStrings @ ["5"],
-      },
-      /* TODO: Fetch the value of the last set */
-      /* TODO: Check if another set can be added first */
+  | AddCustomSet =>
+    if (!canAddCustomSet(state.dialogState)) {
+      state;
+    } else {
+      let lastSet = state.dialogState.customSets |> List.rev |> List.hd;
+      let lastSetString =
+        state.dialogState.customSetsStrings |> List.rev |> List.hd;
+      {
+        ...state,
+        dialogState: {
+          ...state.dialogState,
+          customSets: state.dialogState.customSets @ [lastSet],
+          customSetsStrings:
+            state.dialogState.customSetsStrings @ [lastSetString],
+        },
+      };
     }
   | RemoveCustomSet(index) => {
       ...state,
-      dialogState: {
-        ...state.dialogState,
-        customSets:
-          state.dialogState.customSets |> Utils.removeAtIndex(index),
-        customSetsStrings:
-          state.dialogState.customSetsStrings |> Utils.removeAtIndex(index),
-      },
+      dialogState: tryRemoveCustomSet(index, state.dialogState),
     }
-  | ChangeCustomSet(index, newSetString) => {
+  | ChangeCustomSet(index, newSetString) =>
+    let newSet =
+      index
+      |> List.nth(state.dialogState.customSets)
+      |> Belt.Option.getWithDefault(newSetString |> toValidSet);
+
+    {
       ...state,
       dialogState: {
         ...state.dialogState,
         customSetsStrings:
           state.dialogState.customSetsStrings
-          |> Utils.changeAtIndex(index, Utils.replaceFunc, newSetString),
+          |> changeAtIndex(index, replaceFunc, newSetString),
+        customSets:
+          state.dialogState.customSets
+          |> changeAtIndex(index, replaceFunc, newSet),
       },
-      /* TODO: customSets */
-    }
+    };
   | ShowComment => {
       ...state,
       dialogState: {
@@ -148,20 +233,12 @@ let appReducer = (state, action): appState =>
         comment: newComment,
       },
     }
-  | AddLink =>
-    /* TODO: Check if link can be added first */
-    {
-      ...state,
-      dialogState: {
-        ...state.dialogState,
-        links: state.dialogState.links @ [{text: "text", url: "url"}],
-      },
-    }
+  | AddLink => {...state, dialogState: tryAddLink(state.dialogState)}
   | RemoveLink(index) => {
       ...state,
       dialogState: {
         ...state.dialogState,
-        links: state.dialogState.links |> Utils.removeAtIndex(index),
+        links: state.dialogState.links |> removeAtIndex(index),
       },
     }
   | ChangeLinkText(index, newText) => {
@@ -170,7 +247,7 @@ let appReducer = (state, action): appState =>
         ...state.dialogState,
         links:
           state.dialogState.links
-          |> Utils.changeAtIndex(
+          |> changeAtIndex(
                index,
                replaceLinkTextFunc,
                {text: newText, url: ""},
@@ -183,7 +260,7 @@ let appReducer = (state, action): appState =>
         ...state.dialogState,
         links:
           state.dialogState.links
-          |> Utils.changeAtIndex(
+          |> changeAtIndex(
                index,
                replaceLinkUrlFunc,
                {text: "", url: newUrl},

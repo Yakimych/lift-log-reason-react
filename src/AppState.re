@@ -3,11 +3,18 @@ type set = {
   rpe: option(float),
 };
 
+type liftInfoLink = {
+  text: string,
+  url: string,
+};
+
 type liftLogEntry = {
   date: Js.Date.t,
   name: string,
   weightLifted: float,
   sets: list(set),
+  comment: string,
+  links: list(liftInfoLink),
 };
 
 type liftLog = {
@@ -28,17 +35,12 @@ type newEntryState = {
   date: Js.Date.t,
   name: string,
   weightLiftedString: string,
-  weightLifted: option(int),
+  weightLifted: float,
 };
 
 type inputMode =
   | SetsReps
   | CustomReps;
-
-type liftInfoLink = {
-  text: string,
-  url: string,
-};
 
 type dialogState = {
   isOpen: bool,
@@ -52,7 +54,7 @@ type dialogState = {
   commentIsShown: bool,
   comment: string,
   canAddLink: bool,
-  links: list(liftInfoLink) /* TODO: Change to array? */
+  links: list(liftInfoLink),
 };
 
 type appState = {

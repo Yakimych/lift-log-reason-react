@@ -1,15 +1,13 @@
 open AppState;
 
 type action =
-  /* | EntryAddStart
-     | EntryAddSuccess
-     | EntryAddError(string) */
   | ChangeDate(Js.Date.t)
   | ChangeName(string)
   | ChangeWeightLifted(string)
-  | LogFetchStart
+  | AddLogEntry
+  | FetchLogEntries
   | LogFetchSuccess(liftLog)
-  | LogFetchError(string)
+  | ApiCallError(string)
   | DialogReset
   | DialogOpen
   | DialogClose
