@@ -21,6 +21,11 @@ let toApiSet = (set: AppState.set) => {
   "rpe": set.rpe,
 };
 
+let toApiLink = (link: AppState.liftInfoLink) => {
+  "text": link.text,
+  "url": link.url,
+};
+
 let addLogEntry =
     (logName, logEntry: AppState.liftLogEntry, successAction, errorAction) => {
   let apiEntry = {
@@ -28,17 +33,17 @@ let addLogEntry =
     "weightLifted": logEntry.weightLifted,
     "date": logEntry.date,
     "sets": logEntry.sets |> Array.of_list |> Array.map(toApiSet),
+    "comment": logEntry.comment,
+    "links": logEntry.links |> Array.of_list |> Array.map(toApiLink),
   };
 
   Js.log("Adding entry: ");
   Js.log(apiEntry);
 
-  Js.Promise.
-    /* Axios.postData(logName |> addEntryUrl, apiEntry) */
-    (
-      Axios.post(logName |> addEntryUrl)
-      |> then_(response => response |> successAction |> resolve)
-      |> catch(error => error |> errorAction |> resolve)
-      |> ignore
-    );
+  Js.Promise.(
+    Axios.postData(logName |> addEntryUrl, apiEntry)
+    |> then_(response => response |> successAction |> resolve)
+    |> catch(error => error |> errorAction |> resolve)
+    |> ignore
+  );
 };

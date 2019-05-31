@@ -38,6 +38,8 @@ let make = _children => {
             weightLifted: newEntryState.weightLifted,
             date: newEntryState.date,
             sets: dialogState.customSets,
+            comment: dialogState.comment,
+            links: dialogState.links,
           };
 
           let successAction = _ => self.send(LogFetchStart);
