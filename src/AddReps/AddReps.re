@@ -22,7 +22,7 @@ let make =
       ~changeLinkText,
       ~changeLinkUrl,
     ) => {
-  <Modal isOpen={dialogState.isOpen} toggle=closeDialog>
+  <Modal isOpen={dialogState.isOpen} toggle=closeDialog backdrop="static">
     <ModalHeader> {ReasonReact.string("Input sets and reps")} </ModalHeader>
     <ModalBody>
       <div className="px-1">
