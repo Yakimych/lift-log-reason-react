@@ -22,13 +22,13 @@ let make = (~onAdd, ~onRemove, ~onChange, ~canAddSet, ~customSetsStrings) => {
                   }
                 />
                 {index != 0
-                   ? <InputGroupAddon addonType="append">
+                   ? <InputGroupAddonWrapper addonType="append">
                        <div
                          className="input-group-text remove-icon-wrapper p-0"
                          onClick={_ => onRemove(index)}>
                          <OcticonWrapper icon={getIconByName("x")} />
                        </div>
-                     </InputGroupAddon>
+                     </InputGroupAddonWrapper>
                    : ReasonReact.null}
               </InputGroup>
             </div>
