@@ -22,8 +22,8 @@
     "@ahrefs/bs-reactstrap": "^0.5.9",
     "@githubprimer/octicons-react": "^8.2.0",
     "@glennsl/bs-json": "^3.0.0",
-    "bootstrap": "^4.2.1",
-    "bs-axios": "0.0.39",
+    "bootstrap": "^4.3.1",
+    "bs-axios": "0.0.42",
     "dotenv-webpack": "^1.6.0",
     "react": "^16.2.0",
     "react-animate-height": "^2.0.7",
@@ -32,8 +32,8 @@
     "reason-react": ">=0.4.0"
   },
   "devDependencies": {
-    "@glennsl/bs-jest": "^0.4.6",
-    "bs-platform": "^4.0.14",
+    "@glennsl/bs-jest": "^0.4.8",
+    "bs-platform": "^5.0.4",
     "css-loader": "^2.1.0",
     "html-webpack-plugin": "^3.2.0",
     "style-loader": "^0.23.1",
