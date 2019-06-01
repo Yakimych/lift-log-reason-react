@@ -14,11 +14,13 @@ let make = () => {
     React.useReducer(AppReducer.appReducer, InitialState.getInitialState());
 
   let fetchLogEntries = () => {
-    let successAction = liftLog => dispatch(LogFetchSuccess(liftLog));
-    let errorAction = _ => dispatch(ApiCallError("Error fetching log"));
-
     dispatch(ApiCallStarted);
-    ApiCaller.fetchLiftLog("testlog", successAction, errorAction);
+    Js.Promise.(
+      ApiCaller.fetchLiftLog("testlog")
+      |> then_(liftLog => dispatch(LogFetchSuccess(liftLog)) |> resolve)
+      |> catch(_ => dispatch(ApiCallError("Error fetching log")) |> resolve)
+      |> ignore
+    );
   };
 
   let addLogEntry = () => {
@@ -32,11 +34,13 @@ let make = () => {
       links: dialogState.links,
     };
 
-    let successAction = _ => fetchLogEntries();
-    let errorAction = _ => dispatch(ApiCallError("Failed to add entry"));
-
     dispatch(ApiCallStarted);
-    ApiCaller.addLogEntry("testlog", entry, successAction, errorAction);
+    Js.Promise.(
+      ApiCaller.addLogEntry("testlog", entry)
+      |> then_(_ => fetchLogEntries() |> resolve)
+      |> catch(_ => dispatch(ApiCallError("Failed to add entry")) |> resolve)
+    )
+    |> ignore;
   };
 
   React.useEffect0(() => {

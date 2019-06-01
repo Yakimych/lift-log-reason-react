@@ -5,14 +5,10 @@ let liftLogsUrl = apiBaseUrl ++ "/LiftLogs/";
 let getLiftLogUrl = logName => liftLogsUrl ++ logName;
 let addEntryUrl = logName => getLiftLogUrl(logName) ++ "/lifts";
 
-let fetchLiftLog = (logName, successAction, errorAction) => {
+let fetchLiftLog = logName => {
   Js.Promise.(
     Axios.get(logName |> getLiftLogUrl)
-    |> then_(response =>
-         response##data |> Decode.liftLog |> successAction |> resolve
-       )
-    |> catch(error => error |> errorAction |> resolve)
-    |> ignore
+    |> then_(response => response##data |> Decode.liftLog |> resolve)
   );
 };
 
@@ -26,8 +22,7 @@ let toApiLink = (link: AppState.liftInfoLink) => {
   "url": link.url,
 };
 
-let addLogEntry =
-    (logName, logEntry: AppState.liftLogEntry, successAction, errorAction) => {
+let addLogEntry = (logName, logEntry: AppState.liftLogEntry) => {
   let apiEntry = {
     "name": logEntry.name,
     "weightLifted": logEntry.weightLifted,
@@ -41,10 +36,5 @@ let addLogEntry =
   Js.log("Adding entry: ");
   Js.log(apiEntry);
 
-  Js.Promise.(
-    Axios.postData(logName |> addEntryUrl, apiEntry)
-    |> then_(response => response |> successAction |> resolve)
-    |> catch(error => error |> errorAction |> resolve)
-    |> ignore
-  );
+  Axios.postData(logName |> addEntryUrl, apiEntry);
 };
