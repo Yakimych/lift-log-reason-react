@@ -29,6 +29,7 @@
     "react-animate-height": "^2.0.9",
     "react-datepicker": "^2.6.0",
     "react-dom": "^16.8.6",
+    "reactstrap": "^8.0.0",
     "reason-react": ">=0.7.0"
   },
   "devDependencies": {

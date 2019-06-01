@@ -52,13 +52,13 @@ let make =
                     changeLinkUrl(index, ReactEvent.Form.target(e)##value)
                   }
                 />
-                <InputGroupAddon addonType="append">
+                <InputGroupAddonWrapper addonType="append">
                   <div
                     className="input-group-text remove-icon-wrapper"
                     onClick={_ => removeLink(index)}>
                     <OcticonWrapper icon={getIconByName("x")} />
                   </div>
-                </InputGroupAddon>
+                </InputGroupAddonWrapper>
               </InputGroup>
             </div>
           )
