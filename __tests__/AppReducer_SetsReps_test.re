@@ -5,7 +5,7 @@ open AppActions;
 open AppState;
 
 let runActions = actions =>
-  actions |> List.fold_left(appReducer, InitialState.getInitialState());
+  actions->Belt.List.reduce(InitialState.getInitialState(), appReducer);
 
 describe("AppReducer", () => {
   describe("number of sets", () => {
@@ -45,7 +45,7 @@ describe("AppReducer", () => {
           [DialogOpen, SetNumberOfSets("6"), SetInputMode(CustomReps)]
           |> runActions;
 
-        expect(finalState.dialogState.customSets |> Belt.List.length)
+        expect(finalState.dialogState.customSets->Belt.Array.length)
         |> toEqual(6);
       },
     );
@@ -58,7 +58,8 @@ describe("AppReducer", () => {
           |> runActions;
 
         expect(
-          finalState.dialogState.customSets->Belt.List.every(e => e.reps == 8),
+          finalState.dialogState.customSets
+          ->Belt.Array.every(e => e.reps == 8),
         )
         |> toBe(true);
       },
@@ -79,7 +80,7 @@ describe("AppReducer", () => {
         ]
         |> runActions;
 
-      expect(finalState.dialogState.customSets |> Belt.List.head)
+      expect(finalState.dialogState.customSets->Belt.Array.get(0))
       |> toEqual(Some({reps: 2, rpe: Some(9.5)}));
     });
 
@@ -88,7 +89,7 @@ describe("AppReducer", () => {
         [DialogOpen, SetInputMode(CustomReps), ChangeCustomSet(0, "1")]
         |> runActions;
 
-      expect(finalState.dialogState.customSets |> Belt.List.head)
+      expect(finalState.dialogState.customSets->Belt.Array.get(0))
       |> toEqual(Some({reps: 1, rpe: None}));
     });
 
@@ -97,7 +98,7 @@ describe("AppReducer", () => {
         [DialogOpen, SetInputMode(CustomReps), ChangeCustomSet(1, "4@7.5")]
         |> runActions;
 
-      expect(List.nth(finalState.dialogState.customSets, 1))
+      expect(Belt.Array.getExn(finalState.dialogState.customSets, 1))
       |> toEqual({reps: 4, rpe: Some(7.5)});
     });
 
@@ -108,7 +109,8 @@ describe("AppReducer", () => {
         @ add31CustomSets
         |> runActions;
 
-      expect(finalState.dialogState.customSets |> List.length) |> toEqual(30);
+      expect(finalState.dialogState.customSets->Belt.Array.length)
+      |> toEqual(30);
     });
 
     test("should not be able to delete last custom set", () => {
@@ -119,7 +121,8 @@ describe("AppReducer", () => {
         @ remove10CustomSets
         |> runActions;
 
-      expect(finalState.dialogState.customSets |> List.length) |> toEqual(1);
+      expect(finalState.dialogState.customSets->Belt.Array.length)
+      |> toEqual(1);
     });
 
     test("added custom set should be the same as last custom set", () => {
@@ -132,7 +135,12 @@ describe("AppReducer", () => {
         ]
         |> runActions;
 
-      expect(finalState.dialogState.customSets |> List.rev |> List.hd)
+      expect(
+        finalState.dialogState.customSets
+        ->Belt.Array.getExn(
+            Belt.Array.length(finalState.dialogState.customSets) - 1,
+          ),
+      )
       |> toEqual({reps: 8, rpe: None});
     });
   });

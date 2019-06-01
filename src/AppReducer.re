@@ -16,24 +16,27 @@ let maxNumberOfLinks = 3;
 let maxNumberOfCustomSets = 30;
 
 let canAddLink = dialogState => {
-  dialogState.links |> List.length < maxNumberOfLinks;
+  dialogState.links->Belt.Array.length < maxNumberOfLinks;
 };
 
 let canAddCustomSet = dialogState => {
-  dialogState.customSets |> List.length < maxNumberOfCustomSets;
+  dialogState.customSets->Belt.Array.length < maxNumberOfCustomSets;
 };
 
 let canRemoveCustomSet = dialogState => {
-  dialogState.customSets |> List.length > 1;
+  dialogState.customSets->Belt.Array.length > 1;
 };
 
 let tryRemoveCustomSet = (index, dialogState) =>
   if (canRemoveCustomSet(dialogState)) {
     {
       ...dialogState,
-      customSets: dialogState.customSets |> removeAtIndex(index),
+      customSets:
+        dialogState.customSets
+        ->Belt.Array.keepWithIndex((_, i) => i !== index),
       customSetsStrings:
-        dialogState.customSetsStrings |> Utils.removeAtIndex(index),
+        dialogState.customSetsStrings
+        ->Belt.Array.keepWithIndex((_, i) => i !== index),
     };
   } else {
     dialogState;
@@ -43,7 +46,8 @@ let tryAddLink = dialogState =>
   if (canAddLink(dialogState)) {
     {
       ...dialogState,
-      links: dialogState.links @ [{text: "text", url: "url"}],
+      links:
+        dialogState.links->Belt.Array.concat([|{text: "text", url: "url"}|]),
     };
   } else {
     dialogState;
@@ -51,14 +55,12 @@ let tryAddLink = dialogState =>
 
 let getCustomSetsFromSetsReps = dialogState => {
   let customSetsString =
-    Array.make(dialogState.numberOfSets, dialogState.numberOfRepsString)
-    |> Array.to_list;
+    Array.make(dialogState.numberOfSets, dialogState.numberOfRepsString);
   let customSets =
     Array.make(
       dialogState.numberOfSets,
       {reps: dialogState.numberOfReps, rpe: None},
-    )
-    |> Array.to_list;
+    );
   (customSets, customSetsString);
 };
 
@@ -137,7 +139,7 @@ let appReducer = (state, action): appState =>
   | SetInputMode(inputMode) =>
     /* TODO: Refactor */
     let switchingToCustom = inputMode == CustomReps;
-    let isFirstSwitch = state.dialogState.customSets |> List.length == 0;
+    let isFirstSwitch = state.dialogState.customSets->Belt.Array.length == 0;
     if (switchingToCustom && isFirstSwitch) {
       let (customSets, customSetsStrings) =
         getCustomSetsFromSetsReps(state.dialogState);
@@ -183,16 +185,25 @@ let appReducer = (state, action): appState =>
     if (!canAddCustomSet(state.dialogState)) {
       state;
     } else {
-      let lastSet = state.dialogState.customSets |> List.rev |> List.hd;
+      let lastSet =
+        state.dialogState.customSets
+        ->Belt.Array.getExn(
+            Belt.Array.length(state.dialogState.customSets) - 1,
+          );
       let lastSetString =
-        state.dialogState.customSetsStrings |> List.rev |> List.hd;
+        state.dialogState.customSetsStrings
+        ->Belt.Array.getExn(
+            Belt.Array.length(state.dialogState.customSets) - 1,
+          );
       {
         ...state,
         dialogState: {
           ...state.dialogState,
-          customSets: state.dialogState.customSets @ [lastSet],
+          customSets:
+            state.dialogState.customSets->Belt.Array.concat([|lastSet|]),
           customSetsStrings:
-            state.dialogState.customSetsStrings @ [lastSetString],
+            state.dialogState.customSetsStrings
+            ->Belt.Array.concat([|lastSetString|]),
         },
       };
     }
@@ -201,21 +212,25 @@ let appReducer = (state, action): appState =>
       dialogState: tryRemoveCustomSet(index, state.dialogState),
     }
   | ChangeCustomSet(index, newSetString) =>
+    let maybeValidSet = newSetString |> toValidSet;
     let newSet =
-      index
-      |> List.nth(state.dialogState.customSets)
-      |> Belt.Option.getWithDefault(newSetString |> toValidSet);
+      maybeValidSet->Belt.Option.getWithDefault(
+        Belt.Array.getExn(state.dialogState.customSets, index),
+      );
+
+    let newCustomSets = state.dialogState.customSets->Belt.Array.copy;
+    newCustomSets->Belt.Array.setExn(index, newSet);
+
+    let newCustomSetsStrings =
+      state.dialogState.customSetsStrings->Belt.Array.copy;
+    newCustomSetsStrings->Belt.Array.setExn(index, newSetString);
 
     {
       ...state,
       dialogState: {
         ...state.dialogState,
-        customSetsStrings:
-          state.dialogState.customSetsStrings
-          |> changeAtIndex(index, replaceFunc, newSetString),
-        customSets:
-          state.dialogState.customSets
-          |> changeAtIndex(index, replaceFunc, newSet),
+        customSetsStrings: newCustomSetsStrings,
+        customSets: newCustomSets,
       },
     };
   | ShowComment => {
@@ -237,33 +252,41 @@ let appReducer = (state, action): appState =>
       ...state,
       dialogState: {
         ...state.dialogState,
-        links: state.dialogState.links |> removeAtIndex(index),
+        links:
+          state.dialogState.links
+          ->Belt.Array.keepWithIndex((_, i) => i !== index),
       },
     }
-  | ChangeLinkText(index, newText) => {
+  | ChangeLinkText(index, newText) =>
+    // TODO: Extract into a function?
+    let linkToReplace = state.dialogState.links->Belt.Array.getExn(index);
+    let newLinks = Belt.Array.copy(state.dialogState.links);
+    newLinks->Belt.Array.setExn(
+      index,
+      {text: newText, url: linkToReplace.url},
+    );
+
+    {
       ...state,
       dialogState: {
         ...state.dialogState,
-        links:
-          state.dialogState.links
-          |> changeAtIndex(
-               index,
-               replaceLinkTextFunc,
-               {text: newText, url: ""},
-             ),
+        links: newLinks,
       },
-    }
-  | ChangeLinkUrl(index, newUrl) => {
+    };
+  | ChangeLinkUrl(index, newUrl) =>
+    // TODO: Extract into a function?
+    let linkToReplace = state.dialogState.links->Belt.Array.getExn(index);
+    let newLinks = Belt.Array.copy(state.dialogState.links);
+    newLinks->Belt.Array.setExn(
+      index,
+      {text: linkToReplace.text, url: newUrl},
+    );
+
+    {
       ...state,
       dialogState: {
         ...state.dialogState,
-        links:
-          state.dialogState.links
-          |> changeAtIndex(
-               index,
-               replaceLinkUrlFunc,
-               {text: "", url: newUrl},
-             ),
+        links: newLinks,
       },
-    }
+    };
   };

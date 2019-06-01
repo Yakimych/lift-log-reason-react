@@ -7,12 +7,12 @@ let getInitialDialogState = () => {
   numberOfReps: 5,
   numberOfSetsString: "3",
   numberOfSets: 3,
-  customSets: [],
-  customSetsStrings: [],
+  customSets: [||],
+  customSetsStrings: [||],
   commentIsShown: false,
   comment: "",
   canAddLink: true,
-  links: [],
+  links: [||],
 };
 
 let getInitialLiftLogState = () => {

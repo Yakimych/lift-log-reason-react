@@ -27,9 +27,9 @@ let addLogEntry = (logName, logEntry: AppState.liftLogEntry) => {
     "name": logEntry.name,
     "weightLifted": logEntry.weightLifted,
     "date": logEntry.date,
-    "sets": logEntry.sets |> Array.of_list |> Array.map(toApiSet),
+    "sets": logEntry.sets |> Array.map(toApiSet),
     "comment": logEntry.comment,
-    "links": logEntry.links |> Array.of_list |> Array.map(toApiLink),
+    "links": logEntry.links |> Array.map(toApiLink),
   };
 
   // TODO: Remove

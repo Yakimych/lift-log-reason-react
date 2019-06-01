@@ -19,13 +19,13 @@ let logEntry = json => {
     name: json |> field("name", string),
     weightLifted: json |> field("weightLifted", float),
     date: json |> field("date", date),
-    sets: json |> field("sets", list(set)),
+    sets: json |> field("sets", array(set)),
     comment:
       (json |> optional(field("comment", string)))
       ->Belt.Option.getWithDefault(""),
     links:
-      (json |> optional(field("links", list(link))))
-      ->Belt.Option.getWithDefault([]),
+      (json |> optional(field("links", array(link))))
+      ->Belt.Option.getWithDefault([||]),
   };
 };
 

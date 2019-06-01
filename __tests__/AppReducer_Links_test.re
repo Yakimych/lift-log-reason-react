@@ -5,24 +5,24 @@ open AppActions;
 open AppState;
 
 let runActions = actions =>
-  actions |> List.fold_left(appReducer, InitialState.getInitialState());
+  actions->Belt.List.reduce(InitialState.getInitialState(), appReducer);
 
 describe("AppReducer", () =>
   describe("links", () => {
     test("should be added", () => {
       let finalState = [DialogOpen, AddLink, AddLink, AddLink] |> runActions;
-      expect(finalState.dialogState.links |> List.length) |> toBe(3);
+      expect(finalState.dialogState.links->Belt.Array.length) |> toBe(3);
     });
 
     test("should not be possible to add more than 3 links", () => {
       let finalState =
         [DialogOpen, AddLink, AddLink, AddLink, AddLink] |> runActions;
-      expect(finalState.dialogState.links |> List.length) |> toBe(3);
+      expect(finalState.dialogState.links->Belt.Array.length) |> toBe(3);
     });
 
     test("should not be possible to remove link if none exist", () => {
       let finalState = [DialogOpen, RemoveLink(0)] |> runActions;
-      expect(finalState.dialogState.links |> List.length) |> toBe(0);
+      expect(finalState.dialogState.links->Belt.Array.length) |> toBe(0);
     });
 
     test("should not be possible to remove more links than added", () => {
@@ -36,7 +36,7 @@ describe("AppReducer", () =>
           RemoveLink(0),
         ]
         |> runActions;
-      expect(finalState.dialogState.links |> List.length) |> toBe(0);
+      expect(finalState.dialogState.links->Belt.Array.length) |> toBe(0);
     });
 
     test("should change text and url", () => {
@@ -53,7 +53,7 @@ describe("AppReducer", () =>
         ]
         |> runActions;
 
-      let changedLink = finalState.dialogState.links |> List.hd;
+      let changedLink = finalState.dialogState.links->Belt.Array.getExn(0);
       expect((changedLink.text, changedLink.url))
       |> toEqual((linkText, linkUrl));
     });

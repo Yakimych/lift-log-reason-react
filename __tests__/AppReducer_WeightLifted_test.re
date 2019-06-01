@@ -5,7 +5,7 @@ open AppActions;
 open AppState;
 
 let runActions = actions =>
-  actions |> List.fold_left(appReducer, InitialState.getInitialState());
+  actions->Belt.List.reduce(InitialState.getInitialState(), appReducer);
 
 describe("AppReducer", () =>
   describe("weightLifted", () => {

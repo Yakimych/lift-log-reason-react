@@ -11,11 +11,11 @@ let make = (~entries: list(liftLogEntry)) => {
     </div>
     <div className="lifts">
       {entries
-       |> List.rev
-       |> List.mapi((index, logEntry) =>
-            <LiftRow entry=logEntry key={string_of_int(index)} />
-          )
-       |> Array.of_list
+       ->Belt.List.reverse
+       ->Belt.List.mapWithIndex((index, logEntry) =>
+           <LiftRow entry=logEntry key={string_of_int(index)} />
+         )
+       ->Belt.List.toArray
        |> ReasonReact.array}
     </div>
   </>;

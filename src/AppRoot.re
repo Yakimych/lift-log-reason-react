@@ -50,7 +50,7 @@ let make = () => {
 
   let numberOfEntriesText =
     "Number of entries: "
-    ++ string_of_int(state.liftLogState.logEntries |> List.length);
+    ++ string_of_int(state.liftLogState.logEntries->Belt.List.length);
 
   <main className="mt-3 mb-3 p-2 box-shadow App-main">
     <span>

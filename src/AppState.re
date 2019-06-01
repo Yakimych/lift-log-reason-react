@@ -12,9 +12,9 @@ type liftLogEntry = {
   date: Js.Date.t,
   name: string,
   weightLifted: float,
-  sets: list(set),
+  sets: array(set),
   comment: string,
-  links: list(liftInfoLink),
+  links: array(liftInfoLink),
 };
 
 type liftLog = {
@@ -49,12 +49,12 @@ type dialogState = {
   numberOfSets: int,
   numberOfRepsString: string,
   numberOfReps: int,
-  customSetsStrings: list(string),
-  customSets: list(set),
+  customSetsStrings: array(string),
+  customSets: array(set),
   commentIsShown: bool,
   comment: string,
   canAddLink: bool,
-  links: list(liftInfoLink),
+  links: array(liftInfoLink),
 };
 
 type appState = {
