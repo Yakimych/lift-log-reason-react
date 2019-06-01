@@ -37,6 +37,7 @@ let addLogEntry =
     "links": logEntry.links |> Array.of_list |> Array.map(toApiLink),
   };
 
+  // TODO: Remove
   Js.log("Adding entry: ");
   Js.log(apiEntry);
 

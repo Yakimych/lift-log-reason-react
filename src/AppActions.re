@@ -4,8 +4,7 @@ type action =
   | ChangeDate(Js.Date.t)
   | ChangeName(string)
   | ChangeWeightLifted(string)
-  | AddLogEntry
-  | FetchLogEntries
+  | ApiCallStarted
   | LogFetchSuccess(liftLog)
   | ApiCallError(string)
   | DialogReset

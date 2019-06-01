@@ -8,50 +8,41 @@ open BsReactstrap;
 [%bs.raw {|require('./AppRoot.css')|}];
 [%bs.raw {|require('react-datepicker/dist/react-datepicker.css')|}];
 
-// reducer: (action, state) => {
-//   let newState = AppReducer.appReducer(state, action);
-
-//   switch (action) {
-//   | FetchLogEntries =>
-//     ReasonReact.UpdateWithSideEffects(
-//       newState,
-//       self => {
-//         let successAction = liftLog => self.send(LogFetchSuccess(liftLog));
-//         let errorAction = _ =>
-//           self.send(ApiCallError("Error fetching log"));
-//         ApiCaller.fetchLiftLog("testlog", successAction, errorAction);
-//       },
-//     )
-//   | AddLogEntry =>
-//     ReasonReact.UpdateWithSideEffects(
-//       newState,
-//       self => {
-//         let {newEntryState, dialogState} = self.state;
-//         let entry: liftLogEntry = {
-//           name: newEntryState.name,
-//           weightLifted: newEntryState.weightLifted,
-//           date: newEntryState.date,
-//           sets: dialogState.customSets,
-//           comment: dialogState.comment,
-//           links: dialogState.links,
-//         };
-
-//         let successAction = _ => self.send(FetchLogEntries);
-//         let errorAction = _ =>
-//           self.send(ApiCallError("Failed to add entry"));
-//         ApiCaller.addLogEntry("testlog", entry, successAction, errorAction);
-//       },
-//     )
-//   | _ => ReasonReact.Update(newState)
-//   };
-// },
-
-// didMount: self => self.send(FetchLogEntries),
-
 [@react.component]
 let make = () => {
   let (state, dispatch) =
     React.useReducer(AppReducer.appReducer, InitialState.getInitialState());
+
+  let fetchLogEntries = () => {
+    let successAction = liftLog => dispatch(LogFetchSuccess(liftLog));
+    let errorAction = _ => dispatch(ApiCallError("Error fetching log"));
+
+    dispatch(ApiCallStarted);
+    ApiCaller.fetchLiftLog("testlog", successAction, errorAction);
+  };
+
+  let addLogEntry = () => {
+    let {newEntryState, dialogState} = state;
+    let entry: liftLogEntry = {
+      name: newEntryState.name,
+      weightLifted: newEntryState.weightLifted,
+      date: newEntryState.date,
+      sets: dialogState.customSets,
+      comment: dialogState.comment,
+      links: dialogState.links,
+    };
+
+    let successAction = _ => fetchLogEntries();
+    let errorAction = _ => dispatch(ApiCallError("Failed to add entry"));
+
+    dispatch(ApiCallStarted);
+    ApiCaller.addLogEntry("testlog", entry, successAction, errorAction);
+  };
+
+  React.useEffect0(() => {
+    fetchLogEntries();
+    None;
+  });
 
   let numberOfEntriesText =
     "Number of entries: "
@@ -115,7 +106,7 @@ let make = () => {
         dialogState={state.dialogState}
         onSave={_ => {
           dispatch(DialogClose);
-          dispatch(AddLogEntry);
+          addLogEntry();
         }}
         closeDialog={_ => dispatch(DialogClose)}
         onInputModeChange={mode => dispatch(SetInputMode(mode))}

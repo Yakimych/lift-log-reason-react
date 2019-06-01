@@ -64,8 +64,7 @@ let getCustomSetsFromSetsReps = dialogState => {
 
 let appReducer = (state, action): appState =>
   switch (action) {
-  | FetchLogEntries
-  | AddLogEntry => {
+  | ApiCallStarted => {
       ...state,
       liftLogState: {
         ...state.liftLogState,
