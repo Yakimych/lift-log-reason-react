@@ -12,6 +12,7 @@ let make =
   <div className="d-flex align-items-center ">
     <input
       className="form-control form-control-sm set-rep-input"
+      maxLength=3
       type_="text"
       value=numberOfSets
       onChange={e => onNumberOfSetsChange(ReactEvent.Form.target(e)##value)}
@@ -20,6 +21,7 @@ let make =
       <OcticonWrapper icon={getIconByName("x")} />
     </span>
     <input
+      maxLength=3
       className="form-control form-control-sm set-rep-input"
       type_="text"
       value=numberOfReps

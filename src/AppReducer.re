@@ -15,17 +15,16 @@ let replaceLinkUrlFunc = (newValue, oldValue) => {
 let maxNumberOfLinks = 3;
 let maxNumberOfCustomSets = 30;
 
-let canAddLink = dialogState => {
+let canAddEntry = name => name |> String.length > 0;
+
+let canAddLink = dialogState =>
   dialogState.links->Belt.Array.length < maxNumberOfLinks;
-};
 
-let canAddCustomSet = dialogState => {
+let canAddCustomSet = dialogState =>
   dialogState.customSets->Belt.Array.length < maxNumberOfCustomSets;
-};
 
-let canRemoveCustomSet = dialogState => {
+let canRemoveCustomSet = dialogState =>
   dialogState.customSets->Belt.Array.length > 1;
-};
 
 let tryRemoveCustomSet = (index, dialogState) =>
   if (canRemoveCustomSet(dialogState)) {

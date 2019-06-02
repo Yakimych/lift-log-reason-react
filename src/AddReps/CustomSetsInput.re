@@ -12,7 +12,8 @@ let make = (~onAdd, ~onRemove, ~onChange, ~canAddSet, ~customSetsStrings) => {
            key={string_of_int(index)}
            className="custom-sets-input-group mr-1 mb-1">
            <InputGroup>
-             <Input
+             <InputWrapper
+               maxLength=7
                className="set-rep-input"
                bsSize="sm"
                value=formattedSet

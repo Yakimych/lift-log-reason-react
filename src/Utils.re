@@ -18,6 +18,14 @@ let formatCustomSets = (sets: array(set)): string =>
       }
     );
 
+// TODO: consolidate functions
+let formatDialogSetsReps = (dialogState: dialogState): string =>
+  dialogState.inputMode == SetsReps
+    ? string_of_int(dialogState.numberOfSets)
+      ++ "x"
+      ++ string_of_int(dialogState.numberOfReps)
+    : dialogState.customSets |> formatCustomSets;
+
 let formatSets = (sets: array(set)): string =>
   switch (sets) {
   | [||] => ""

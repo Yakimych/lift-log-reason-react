@@ -31,10 +31,10 @@ let make =
             mode={dialogState.inputMode}
             onChange=onInputModeChange
           />
+          <div className="lead ml-4">
+            {Utils.formatDialogSetsReps(dialogState) |> ReasonReact.string}
+          </div>
         </div>
-        /* <div className="lead ml-4">
-             {formatRepsSets(props.setsReps)}
-           </div> */
         <div className="my-3">
           {dialogState.inputMode == SetsReps
              ? <SetsRepsInput
@@ -45,8 +45,7 @@ let make =
                />
              : <CustomSetsInput
                  customSetsStrings={dialogState.customSetsStrings}
-                 canAddSet=true
-                 /* canAddSet={dialogState.canAddCustomSet} */
+                 canAddSet={AppReducer.canAddCustomSet(dialogState)}
                  onAdd=onAddCustomSet
                  onRemove=onRemoveCustomSet
                  onChange=onCustomSetChange
@@ -55,7 +54,7 @@ let make =
         <div className="d-flex flex-column align-items-start">
           <Comment
             comment={dialogState.comment}
-            hasComment={!dialogState.commentIsShown}
+            hasComment={dialogState.commentIsShown}
             onCommentChange=changeComment
             onOpenComment=openComment
           />

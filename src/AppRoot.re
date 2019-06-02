@@ -71,7 +71,7 @@ let make = () => {
         </div>
         <div className="col">
           <input
-            /* disabled={props.disabled} */
+            disabled={state.liftLogState.isLoading}
             className="form-control form-control-sm log-entry-input"
             type_="text"
             placeholder="Name"
@@ -84,7 +84,7 @@ let make = () => {
         </div>
         <div className="col">
           <input
-            /* disabled={props.disabled} */
+            disabled={state.liftLogState.isLoading}
             className="form-control form-control-sm log-entry-input"
             type_="text"
             placeholder="Weight"
@@ -95,16 +95,21 @@ let make = () => {
           />
         </div>
         <div className="col d-flex align-items-center">
-          /* <span className="mr-2"> {formatRepsSets(props.setsReps)} </span> */
-          /* disabled={
-               props.disabled || !canAddEntry(props.name, props.weightLifted)
-             } */
-
-            <Button
-              size="sm" color="primary" onClick={_ => dispatch(DialogOpen)}>
-              {ReasonReact.string("Add")}
-            </Button>
-          </div>
+          <span className="mr-2">
+            {Utils.formatDialogSetsReps(state.dialogState)
+             |> ReasonReact.string}
+          </span>
+          <Button
+            disabled={
+              state.liftLogState.isLoading
+              || !AppReducer.canAddEntry(state.newEntryState.name)
+            }
+            size="sm"
+            color="primary"
+            onClick={_ => dispatch(DialogOpen)}>
+            {ReasonReact.string("Add")}
+          </Button>
+        </div>
       </div>
       <AddReps
         dialogState={state.dialogState}
