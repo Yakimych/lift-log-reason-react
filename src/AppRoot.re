@@ -8,15 +8,23 @@ open BsReactstrap;
 [%bs.raw {|require('./AppRoot.css')|}];
 [%bs.raw {|require('react-datepicker/dist/react-datepicker.css')|}];
 
+let getLoadingText = logName => "Loading " ++ logName;
+let getErrorText = logName => "Failed to load: '" ++ logName ++ "'";
+let getHeaderText = (logName, logTitle, failedToFetch) =>
+  failedToFetch ? getErrorText(logName) : logTitle;
+
 [@react.component]
 let make = () => {
   let (state, dispatch) =
     React.useReducer(AppReducer.appReducer, InitialState.getInitialState());
 
+  let url = ReasonReactRouter.useUrl();
+  let logName = url.path->Belt.List.head->Belt.Option.getWithDefault("");
+
   let fetchLogEntries = () => {
     dispatch(ApiCallStarted);
     Js.Promise.(
-      ApiCaller.fetchLiftLog("testlog")
+      ApiCaller.fetchLiftLog(logName)
       |> then_(liftLog => dispatch(LogFetchSuccess(liftLog)) |> resolve)
       |> catch(_ => dispatch(ApiCallError("Error fetching log")) |> resolve)
       |> ignore
@@ -36,7 +44,7 @@ let make = () => {
 
     dispatch(ApiCallStarted);
     Js.Promise.(
-      ApiCaller.addLogEntry("testlog", entry)
+      ApiCaller.addLogEntry(logName, entry)
       |> then_(_ => fetchLogEntries() |> resolve)
       |> catch(_ => dispatch(ApiCallError("Failed to add entry")) |> resolve)
     )
@@ -48,17 +56,27 @@ let make = () => {
     None;
   });
 
-  let numberOfEntriesText =
-    "Number of entries: "
-    ++ string_of_int(state.liftLogState.logEntries->Belt.List.length);
-
-  <main className="mt-3 mb-3 p-2 box-shadow App-main">
-    <span>
-      {ReasonReact.string(
-         state.liftLogState.isLoading ? "Loading..." : numberOfEntriesText,
-       )}
-    </span>
-    <div className="add-log-entry">
+  <div className="App">
+    <header className="App-header">
+      <h1 className="App-title">
+        {ReasonReact.string(
+           state.liftLogState.isLoading
+             ? getLoadingText(logName)
+             : getHeaderText(
+                 logName,
+                 state.liftLogState.logTitle,
+                 state.liftLogState.networkErrorOccured,
+               ),
+         )}
+      </h1>
+    </header>
+    <div className="mt-3 mb-3 p-2 box-shadow lift-log-container">
+      <div className="row">
+        <h6 className="col"> {"Date" |> ReasonReact.string} </h6>
+        <h6 className="col"> {"Name" |> ReasonReact.string} </h6>
+        <h6 className="col"> {"Weight lifted (kg)" |> ReasonReact.string} </h6>
+        <h6 className="col"> {"Sets/Reps" |> ReasonReact.string} </h6>
+      </div>
       <div className="row">
         <div className="col">
           <DatePickerWrapper
@@ -139,5 +157,5 @@ let make = () => {
       />
       <LiftLogContainer entries={state.liftLogState.logEntries} />
     </div>
-  </main>;
+  </div>;
 };
