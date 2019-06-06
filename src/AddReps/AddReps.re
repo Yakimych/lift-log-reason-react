@@ -36,7 +36,7 @@ let make =
           </div>
         </div>
         <div className="my-3">
-          {dialogState.inputMode == SetsReps
+          {dialogState.inputMode == Standard
              ? <SetsRepsInput
                  numberOfSets={dialogState.numberOfSetsString}
                  numberOfReps={dialogState.numberOfRepsString}

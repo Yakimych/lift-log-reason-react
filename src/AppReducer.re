@@ -126,7 +126,7 @@ let appReducer = (state, action): appState =>
     }
   | SetInputMode(inputMode) =>
     /* TODO: Refactor */
-    let switchingToCustom = inputMode == CustomReps;
+    let switchingToCustom = inputMode == Custom;
     let isFirstSwitch = state.dialogState.customSets->Belt.Array.length == 0;
     if (switchingToCustom && isFirstSwitch) {
       let customSetsStrings =

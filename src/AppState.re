@@ -39,8 +39,8 @@ type newEntryState = {
 };
 
 type inputMode =
-  | SetsReps
-  | CustomReps;
+  | Standard
+  | Custom;
 
 type dialogState = {
   isOpen: bool,

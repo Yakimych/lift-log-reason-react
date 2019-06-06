@@ -20,7 +20,7 @@ let formatCustomSets = (sets: array(set)): string =>
 
 // TODO: consolidate functions
 let formatDialogSetsReps = (dialogState: dialogState): string =>
-  dialogState.inputMode == SetsReps
+  dialogState.inputMode == Standard
     ? string_of_int(dialogState.numberOfSets)
       ++ "x"
       ++ string_of_int(dialogState.numberOfReps)
@@ -33,7 +33,7 @@ let getSetsFromSetsReps = dialogState =>
   );
 
 let getSetsArray = (dialogState: dialogState): array(set) =>
-  dialogState.inputMode == CustomReps
+  dialogState.inputMode == Custom
     ? dialogState.customSets : getSetsFromSetsReps(dialogState);
 
 let formatSets = (sets: array(set)): string =>

@@ -6,14 +6,14 @@ let make = (~mode: inputMode, ~onChange) => {
   <ButtonGroup>
     <InputModeButton
       id="standardInputModeButton"
-      buttonMode=SetsReps
+      buttonMode=Standard
       currentMode=mode
       onClick=onChange>
       {ReasonReact.string("Standard")}
     </InputModeButton>
     <InputModeButton
       id="customRepsButton"
-      buttonMode=CustomReps
+      buttonMode=Custom
       currentMode=mode
       onClick=onChange>
       {ReasonReact.string("Custom")}

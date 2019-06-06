@@ -2,7 +2,7 @@ open AppState;
 
 let getInitialDialogState = () => {
   isOpen: false,
-  inputMode: SetsReps,
+  inputMode: Standard,
   numberOfRepsString: "5",
   numberOfReps: 5,
   numberOfSetsString: "3",
