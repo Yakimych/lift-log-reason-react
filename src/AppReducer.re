@@ -52,17 +52,6 @@ let tryAddLink = dialogState =>
     dialogState;
   };
 
-let getCustomSetsFromSetsReps = dialogState => {
-  let customSetsString =
-    Array.make(dialogState.numberOfSets, dialogState.numberOfRepsString);
-  let customSets =
-    Array.make(
-      dialogState.numberOfSets,
-      {reps: dialogState.numberOfReps, rpe: None},
-    );
-  (customSets, customSetsString);
-};
-
 let appReducer = (state, action): appState =>
   switch (action) {
   | ApiCallStarted => {
@@ -140,8 +129,13 @@ let appReducer = (state, action): appState =>
     let switchingToCustom = inputMode == CustomReps;
     let isFirstSwitch = state.dialogState.customSets->Belt.Array.length == 0;
     if (switchingToCustom && isFirstSwitch) {
-      let (customSets, customSetsStrings) =
-        getCustomSetsFromSetsReps(state.dialogState);
+      let customSetsStrings =
+        Array.make(
+          state.dialogState.numberOfSets,
+          state.dialogState.numberOfRepsString,
+        );
+      let customSets = Utils.getSetsFromSetsReps(state.dialogState);
+
       {
         ...state,
         dialogState: {

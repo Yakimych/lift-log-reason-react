@@ -26,6 +26,16 @@ let formatDialogSetsReps = (dialogState: dialogState): string =>
       ++ string_of_int(dialogState.numberOfReps)
     : dialogState.customSets |> formatCustomSets;
 
+let getSetsFromSetsReps = dialogState =>
+  Array.make(
+    dialogState.numberOfSets,
+    {reps: dialogState.numberOfReps, rpe: None},
+  );
+
+let getSetsArray = (dialogState: dialogState): array(set) =>
+  dialogState.inputMode == CustomReps
+    ? dialogState.customSets : getSetsFromSetsReps(dialogState);
+
 let formatSets = (sets: array(set)): string =>
   switch (sets) {
   | [||] => ""

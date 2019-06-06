@@ -37,7 +37,7 @@ let make = () => {
       name: newEntryState.name,
       weightLifted: newEntryState.weightLifted,
       date: newEntryState.date,
-      sets: dialogState.customSets,
+      sets: dialogState |> Utils.getSetsArray,
       comment: dialogState.comment,
       links: dialogState.links,
     };

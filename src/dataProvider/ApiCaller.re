@@ -32,9 +32,5 @@ let addLogEntry = (logName, logEntry: AppState.liftLogEntry) => {
     "links": logEntry.links |> Array.map(toApiLink),
   };
 
-  // TODO: Remove
-  Js.log("Adding entry: ");
-  Js.log(apiEntry);
-
   Axios.postData(logName |> addEntryUrl, apiEntry);
 };
