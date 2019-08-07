@@ -104,29 +104,7 @@ let make = () => {
           </Button>
         </div>
       </div>
-      <AddReps
-        dialogState
-        onSave={_ => dispatch(ConfirmAddEntry(logName))}
-        closeDialog={_ => dispatch(DialogClose)}
-        onInputModeChange={mode => dispatch(SetInputMode(mode))}
-        onAddCustomSet={_ => dispatch(AddCustomSet)}
-        onRemoveCustomSet={index => dispatch(RemoveCustomSet(index))}
-        onCustomSetChange={(index, value) =>
-          dispatch(ChangeCustomSet(index, value))
-        }
-        onNumberOfSetsChange={value => dispatch(SetNumberOfSets(value))}
-        onNumberOfRepsChange={value => dispatch(SetNumberOfReps(value))}
-        openComment={_ => dispatch(ShowComment)}
-        changeComment={value => dispatch(ChangeComment(value))}
-        addLink={_ => dispatch(AddLink)}
-        removeLink={index => dispatch(RemoveLink(index))}
-        changeLinkText={(index, newText) =>
-          dispatch(ChangeLinkText(index, newText))
-        }
-        changeLinkUrl={(index, newUrl) =>
-          dispatch(ChangeLinkUrl(index, newUrl))
-        }
-      />
+      <AddReps logName />
       <LiftLogContainer entries={liftLogState.logEntries} />
     </div>
   </div>;
