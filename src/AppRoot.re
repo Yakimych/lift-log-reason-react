@@ -13,23 +13,27 @@ let getErrorText = logName => "Failed to load: '" ++ logName ++ "'";
 let getHeaderText = (logName, logTitle, failedToFetch) =>
   failedToFetch ? getErrorText(logName) : logTitle;
 
+let getLiftLogState = (s: AppState.appState) => s.liftLogState;
+let getDialogState = (s: AppState.appState) => s.dialogState;
+let getNewEntryState = (s: AppState.appState) => s.newEntryState;
+
 [@react.component]
 let make = () => {
   let dispatch = ElmishTest.useDispatch();
-  let liftLogState = ElmishTest.useSelector(s => s.liftLogState);
-  let dialogState = ElmishTest.useSelector(s => s.dialogState);
-  let newEntryState = ElmishTest.useSelector(s => s.newEntryState);
+  let liftLogState = ElmishTest.useSelector(getLiftLogState);
+  let dialogState = ElmishTest.useSelector(getDialogState);
+  let newEntryState = ElmishTest.useSelector(getNewEntryState);
   // let (state, dispatch) =
   //   React.useReducer(AppReducer.appReducer, InitialState.getInitialState());
 
   let url = ReasonReactRouter.useUrl();
   let logName = url.path->Belt.List.head->Belt.Option.getWithDefault("");
 
-  // React.useEffect0(() => {
-  //   dispatch(FetchLogEntries(logName));
-  //   // fetchLogEntries();
-  //   None;
-  // });
+  React.useEffect0(() => {
+    dispatch(FetchLogEntries(logName));
+    // fetchLogEntries();
+    None;
+  });
 
   <div className="App">
     <header className="App-header">
@@ -131,9 +135,6 @@ let make = () => {
           dispatch(ChangeLinkUrl(index, newUrl))
         }
       />
-      <button onClick={_ => dispatch(FetchLogEntries(logName))}>
-        {ReasonReact.string("Load")}
-      </button>
       <LiftLogContainer entries={liftLogState.logEntries} />
     </div>
   </div>;
