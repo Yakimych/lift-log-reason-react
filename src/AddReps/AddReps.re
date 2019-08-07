@@ -24,7 +24,13 @@ let make = (~logName: string) => {
             onChange={mode => dispatch(SetInputMode(mode))}
           />
           <div className="lead ml-4">
-            {Utils.formatDialogSetsReps(dialogState) |> ReasonReact.string}
+            {Utils.formatDialogSetsReps(
+               dialogState.inputMode,
+               dialogState.numberOfSets,
+               dialogState.numberOfReps,
+               dialogState.customSets,
+             )
+             |> ReasonReact.string}
           </div>
         </div>
         <div className="my-3">

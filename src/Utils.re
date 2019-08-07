@@ -19,12 +19,11 @@ let formatCustomSets = (sets: array(set)): string =>
     );
 
 // TODO: consolidate functions
-let formatDialogSetsReps = (dialogState: dialogState): string =>
-  dialogState.inputMode == Standard
-    ? string_of_int(dialogState.numberOfSets)
-      ++ "x"
-      ++ string_of_int(dialogState.numberOfReps)
-    : dialogState.customSets |> formatCustomSets;
+let formatDialogSetsReps =
+    (inputMode, numberOfSets, numberOfReps, customSets): string =>
+  inputMode == Standard
+    ? string_of_int(numberOfSets) ++ "x" ++ string_of_int(numberOfReps)
+    : customSets |> formatCustomSets;
 
 let getSetsFromSetsReps = dialogState =>
   Array.make(
