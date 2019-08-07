@@ -54,6 +54,7 @@ let tryAddLink = dialogState =>
 
 let appReducer = (state, action): appState =>
   switch (action) {
+  | FetchLogEntries(_) => state
   | ApiCallStarted => {
       ...state,
       liftLogState: {
@@ -118,6 +119,13 @@ let appReducer = (state, action): appState =>
       },
     }
   | DialogClose => {
+      ...state,
+      dialogState: {
+        ...state.dialogState,
+        isOpen: false,
+      },
+    }
+  | ConfirmAddEntry(_) => {
       ...state,
       dialogState: {
         ...state.dialogState,

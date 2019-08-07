@@ -25,6 +25,7 @@
   "bs-dependencies": [
     "reason-react",
     "@ahrefs/bs-reactstrap",
+    "reason-react-elmish",
     "bs-axios",
     "@glennsl/bs-json"
   ],

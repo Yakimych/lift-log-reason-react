@@ -13,46 +13,22 @@ let getErrorText = logName => "Failed to load: '" ++ logName ++ "'";
 let getHeaderText = (logName, logTitle, failedToFetch) =>
   failedToFetch ? getErrorText(logName) : logTitle;
 
+let getLiftLogState = (s: AppState.appState) => s.liftLogState;
+let getDialogState = (s: AppState.appState) => s.dialogState;
+let getNewEntryState = (s: AppState.appState) => s.newEntryState;
+
 [@react.component]
 let make = () => {
-  let (state, dispatch) =
-    React.useReducer(AppReducer.appReducer, InitialState.getInitialState());
+  let dispatch = ElmishTest.useDispatch();
+  let liftLogState = ElmishTest.useSelector(getLiftLogState);
+  let dialogState = ElmishTest.useSelector(getDialogState);
+  let newEntryState = ElmishTest.useSelector(getNewEntryState);
 
   let url = ReasonReactRouter.useUrl();
   let logName = url.path->Belt.List.head->Belt.Option.getWithDefault("");
 
-  let fetchLogEntries = () => {
-    dispatch(ApiCallStarted);
-    Js.Promise.(
-      ApiCaller.fetchLiftLog(logName)
-      |> then_(liftLog => dispatch(LogFetchSuccess(liftLog)) |> resolve)
-      |> catch(_ => dispatch(ApiCallError("Error fetching log")) |> resolve)
-      |> ignore
-    );
-  };
-
-  let addLogEntry = () => {
-    let {newEntryState, dialogState} = state;
-    let entry: liftLogEntry = {
-      name: newEntryState.name,
-      weightLifted: newEntryState.weightLifted,
-      date: newEntryState.date,
-      sets: dialogState |> Utils.getSetsArray,
-      comment: dialogState.comment,
-      links: dialogState.links,
-    };
-
-    dispatch(ApiCallStarted);
-    Js.Promise.(
-      ApiCaller.addLogEntry(logName, entry)
-      |> then_(_ => fetchLogEntries() |> resolve)
-      |> catch(_ => dispatch(ApiCallError("Failed to add entry")) |> resolve)
-    )
-    |> ignore;
-  };
-
   React.useEffect0(() => {
-    fetchLogEntries();
+    dispatch(FetchLogEntries(logName));
     None;
   });
 
@@ -60,12 +36,12 @@ let make = () => {
     <header className="App-header">
       <h1 className="App-title">
         {ReasonReact.string(
-           state.liftLogState.isLoading
+           liftLogState.isLoading
              ? getLoadingText(logName)
              : getHeaderText(
                  logName,
-                 state.liftLogState.logTitle,
-                 state.liftLogState.networkErrorOccured,
+                 liftLogState.logTitle,
+                 liftLogState.networkErrorOccured,
                ),
          )}
       </h1>
@@ -82,19 +58,19 @@ let make = () => {
           <DatePickerWrapper
             disabled=false
             dateFormat="YYYY-MM-dd"
-            selected={state.newEntryState.date}
+            selected={newEntryState.date}
             onChange={e => dispatch(ChangeDate(e))}
             className="form-control form-control-sm log-entry-input"
           />
         </div>
         <div className="col">
           <input
-            disabled={state.liftLogState.isLoading}
+            disabled={liftLogState.isLoading}
             className="form-control form-control-sm log-entry-input"
             type_="text"
             placeholder="Name"
             maxLength=50
-            value={state.newEntryState.name}
+            value={newEntryState.name}
             onChange={e =>
               dispatch(ChangeName(ReactEvent.Form.target(e)##value))
             }
@@ -102,11 +78,11 @@ let make = () => {
         </div>
         <div className="col">
           <input
-            disabled={state.liftLogState.isLoading}
+            disabled={liftLogState.isLoading}
             className="form-control form-control-sm log-entry-input"
             type_="text"
             placeholder="Weight"
-            value={state.newEntryState.weightLiftedString}
+            value={newEntryState.weightLiftedString}
             onChange={e =>
               dispatch(ChangeWeightLifted(ReactEvent.Form.target(e)##value))
             }
@@ -114,13 +90,12 @@ let make = () => {
         </div>
         <div className="col d-flex align-items-center">
           <span className="mr-2">
-            {Utils.formatDialogSetsReps(state.dialogState)
-             |> ReasonReact.string}
+            {Utils.formatDialogSetsReps(dialogState) |> ReasonReact.string}
           </span>
           <Button
             disabled={
-              state.liftLogState.isLoading
-              || !AppReducer.canAddEntry(state.newEntryState.name)
+              liftLogState.isLoading
+              || !AppReducer.canAddEntry(newEntryState.name)
             }
             size="sm"
             color="primary"
@@ -130,11 +105,8 @@ let make = () => {
         </div>
       </div>
       <AddReps
-        dialogState={state.dialogState}
-        onSave={_ => {
-          dispatch(DialogClose);
-          addLogEntry();
-        }}
+        dialogState
+        onSave={_ => dispatch(ConfirmAddEntry(logName))}
         closeDialog={_ => dispatch(DialogClose)}
         onInputModeChange={mode => dispatch(SetInputMode(mode))}
         onAddCustomSet={_ => dispatch(AddCustomSet)}
@@ -155,7 +127,7 @@ let make = () => {
           dispatch(ChangeLinkUrl(index, newUrl))
         }
       />
-      <LiftLogContainer entries={state.liftLogState.logEntries} />
+      <LiftLogContainer entries={liftLogState.logEntries} />
     </div>
   </div>;
 };
