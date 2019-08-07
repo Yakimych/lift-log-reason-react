@@ -23,15 +23,12 @@ let make = () => {
   let liftLogState = ElmishTest.useSelector(getLiftLogState);
   let dialogState = ElmishTest.useSelector(getDialogState);
   let newEntryState = ElmishTest.useSelector(getNewEntryState);
-  // let (state, dispatch) =
-  //   React.useReducer(AppReducer.appReducer, InitialState.getInitialState());
 
   let url = ReasonReactRouter.useUrl();
   let logName = url.path->Belt.List.head->Belt.Option.getWithDefault("");
 
   React.useEffect0(() => {
     dispatch(FetchLogEntries(logName));
-    // fetchLogEntries();
     None;
   });
 
@@ -109,12 +106,7 @@ let make = () => {
       </div>
       <AddReps
         dialogState
-        onSave={_ =>
-          dispatch(
-            ConfirmAddEntry(logName),
-            // addLogEntry();
-          )
-        }
+        onSave={_ => dispatch(ConfirmAddEntry(logName))}
         closeDialog={_ => dispatch(DialogClose)}
         onInputModeChange={mode => dispatch(SetInputMode(mode))}
         onAddCustomSet={_ => dispatch(AddCustomSet)}
