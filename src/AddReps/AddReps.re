@@ -4,12 +4,13 @@ open BsReactstrap;
 
 [%bs.raw {|require('./AddReps.css')|}];
 
-let getDialogState = (state: appState) => state.dialogState;
-
 [@react.component]
 let make = (~logName: string) => {
-  let dialogState = ElmishTest.useSelector(getDialogState);
-  let dispatch = ElmishTest.useDispatch();
+  let dialogState =
+    ElmishCore.useSelector(
+      React.useCallback0((state: appState) => state.dialogState),
+    );
+  let dispatch = ElmishCore.useDispatch();
 
   <Modal
     isOpen={dialogState.isOpen}

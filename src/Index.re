@@ -1,4 +1,4 @@
 ReactDOMRe.renderToElementWithId(
-  <ElmishTest.ElmishProvider> <AppRoot /> </ElmishTest.ElmishProvider>,
+  <ElmishCore.ElmishProvider> <AppRoot /> </ElmishCore.ElmishProvider>,
   "root",
 );

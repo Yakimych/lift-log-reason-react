@@ -13,31 +13,19 @@ let getErrorText = logName => "Failed to load: '" ++ logName ++ "'";
 let getHeaderText = (logName, logTitle, failedToFetch) =>
   failedToFetch ? getErrorText(logName) : logTitle;
 
-let getLiftLogState = (s: AppState.appState) => s.liftLogState;
-let getNewEntryState = (s: AppState.appState) => s.newEntryState;
-
-let getInputMode = (state: appState) => {
-  state.dialogState.inputMode;
-};
-let getNumberOfSets = (state: appState) => {
-  state.dialogState.numberOfSets;
-};
-let getNumberOfReps = (state: appState) => {
-  state.dialogState.numberOfReps;
-};
-let getCustomSets = (state: appState) => {
-  state.dialogState.customSets;
-};
-
 [@react.component]
 let make = () => {
-  let dispatch = ElmishTest.useDispatch();
-  let liftLogState = ElmishTest.useSelector(getLiftLogState);
-  let inputMode = ElmishTest.useSelector(getInputMode);
-  let numberOfSets = ElmishTest.useSelector(getNumberOfSets);
-  let numberOfReps = ElmishTest.useSelector(getNumberOfReps);
-  let customSets = ElmishTest.useSelector(getCustomSets);
-  let newEntryState = ElmishTest.useSelector(getNewEntryState);
+  let dispatch = ElmishCore.useDispatch();
+
+  let liftLogState =
+    ElmishCore.useSelector(
+      React.useCallback0((s: AppState.appState) => s.liftLogState),
+    );
+
+  let newEntryState =
+    ElmishCore.useSelector(
+      React.useCallback0((s: AppState.appState) => s.newEntryState),
+    );
 
   let url = ReasonReactRouter.useUrl();
   let logName = url.path->Belt.List.head->Belt.Option.getWithDefault("");
@@ -104,15 +92,7 @@ let make = () => {
           />
         </div>
         <div className="col d-flex align-items-center">
-          <span className="mr-2">
-            {Utils.formatDialogSetsReps(
-               inputMode,
-               numberOfSets,
-               numberOfReps,
-               customSets,
-             )
-             |> ReasonReact.string}
-          </span>
+          <FormattedSetsReps />
           <Button
             disabled={
               liftLogState.isLoading
