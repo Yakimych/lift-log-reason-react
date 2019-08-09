@@ -2,6 +2,9 @@ const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const outputDir = path.join(__dirname, "build/");
 
+console.log("NODE_ENV: ", process.env.NODE_ENV);
+console.log("REACT_APP_API_BASE_URL: ", process.env.REACT_APP_API_BASE_URL);
+
 const isProd = process.env.NODE_ENV === "production";
 const Dotenv = require("dotenv-webpack");
 
