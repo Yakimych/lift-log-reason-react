@@ -5,6 +5,10 @@ const outputDir = path.join(__dirname, "build/");
 console.log("NODE_ENV: ", process.env.NODE_ENV);
 console.log("REACT_APP_API_BASE_URL: ", process.env.REACT_APP_API_BASE_URL);
 
+// console.log("process.env keys: ", {
+//   keys: Object.keys(process.env).filter(k => k.startsWith("REACT"))
+// });
+
 const isProd = process.env.NODE_ENV === "production";
 const Dotenv = require("dotenv-webpack");
 
@@ -22,7 +26,7 @@ module.exports = {
       template: "src/index.html",
       inject: false
     }),
-    new Dotenv()
+    new Dotenv({ systemvars: true })
   ],
   devServer: {
     compress: true,
